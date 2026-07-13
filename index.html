@@ -467,7 +467,7 @@
 
 <script>
   /************************************************************
-   * SET YOUR APPS SCRIPT ENDPOINT HERE
+   * CHANGE THIS TO YOUR APPS SCRIPT /exec URL
    ************************************************************/
   const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwx4eqg_cRvtxWpJwVeY-FvhwjtOTW0gewV1AfR_V5wg1Ya_Vs8cfkz388ksp-43B3r/exec';
 
@@ -686,7 +686,9 @@
 
   function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log('Service worker registration failed', err));
+      navigator.serviceWorker.register('sw.js').catch(err => {
+        console.log('Service worker registration failed', err);
+      });
     }
   }
 
@@ -696,6 +698,7 @@
 
   function updateConnectionStatus() {
     const bar = document.getElementById('connectionStatus');
+
     if (navigator.onLine) {
       bar.className = 'status';
       bar.textContent = 'Online - assessments can sync to Google Sheets.';
@@ -708,6 +711,7 @@
   function showTab(e, id) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
+
     document.getElementById(id).classList.add('active');
     e.target.classList.add('active');
 
@@ -718,7 +722,10 @@
   function resetToTenRows() {
     document.getElementById('hazardRows').innerHTML = '';
     hazardRowCount = 0;
-    for (let i = 0; i < 10; i++) addHazardRow();
+
+    for (let i = 0; i < 10; i++) {
+      addHazardRow();
+    }
   }
 
   function addHazardRow() {
@@ -799,7 +806,7 @@
   }
 
   function removeHazardRow(id) {
-    const row = document.querySelector('.hazardRow[data-row="' + id + '"]');
+    const row = getRow(id);
     if (row) row.remove();
     calculateAllRows();
   }
@@ -839,49 +846,35 @@
     const row = getRow(id);
     if (!row) return;
 
-    const hazardName = row.querySelector('.hazardSelect').value;
-    if (!hazardName) {
-      calculateAllRows();
-      return;
-    }
-
-    const ifreq = Number(row.querySelector('.ifreq').value || 0);
-    const iprob = Number(row.querySelector('.iprob').value || 0);
-    const icons = Number(row.querySelector('.icons').value || 0);
-    const rfreq = Number(row.querySelector('.rfreq').value || 0);
-    const rprob = Number(row.querySelector('.rprob').value || 0);
-    const rcons = Number(row.querySelector('.rcons').value || 0);
-
-    const initialScore = ifreq * iprob * icons;
-    const residualScore = rfreq * rprob * rcons;
-
-    setScoreBox(row.querySelector('.initialScore'), 'Initial Score: ' + scoreText(initialScore), initialScore);
-    setScoreBox(row.querySelector('.residualScore'), 'Residual Score: ' + scoreText(residualScore), residualScore);
-
-    const statusBox = row.querySelector('.proceedStatus');
-    statusBox.textContent = 'Proceed Status: ' + getProceedStatus(residualScore);
-    setScoreClass(statusBox, residualScore);
-
+    updateRowScoreDisplay(row);
     calculateAllRows();
   }
 
   function calculateAllRows() {
-    const hazards = collectHazards();
+    const rows = Array.from(document.querySelectorAll('.hazardRow'));
+
+    let highInitial = 0;
+    let highResidual = 0;
+    let completedHazards = 0;
+
+    rows.forEach(row => {
+      const result = updateRowScoreDisplay(row);
+
+      if (!result || !result.hazardName) return;
+
+      completedHazards++;
+
+      highInitial = Math.max(highInitial, Number(result.initialScore || 0));
+      highResidual = Math.max(highResidual, Number(result.residualScore || 0));
+    });
+
     const summary = document.getElementById('finalSummary');
 
-    if (!hazards.length) {
+    if (!completedHazards) {
       summary.className = 'scoreBox';
       summary.textContent = 'Complete hazard rows to calculate final decision.';
       return;
     }
-
-    let highInitial = 0;
-    let highResidual = 0;
-
-    hazards.forEach(h => {
-      highInitial = Math.max(highInitial, Number(h.initialScore || 0));
-      highResidual = Math.max(highResidual, Number(h.residualScore || 0));
-    });
 
     summary.textContent =
       'Highest Initial Risk: ' + scoreText(highInitial) + '\n' +
@@ -891,13 +884,63 @@
     setScoreClass(summary, highResidual);
   }
 
-  function setScoreBox(el, text, score) {
-    el.textContent = text;
-    setScoreClass(el, score);
+  function updateRowScoreDisplay(row) {
+    const hazardName = row.querySelector('.hazardSelect').value;
+
+    const initialBox = row.querySelector('.initialScore');
+    const residualBox = row.querySelector('.residualScore');
+    const statusBox = row.querySelector('.proceedStatus');
+
+    if (!hazardName) {
+      initialBox.textContent = 'Initial Score: not calculated';
+      residualBox.textContent = 'Residual Score: not calculated';
+      statusBox.textContent = 'Proceed Status: not calculated';
+
+      initialBox.className = 'scoreBox initialScore';
+      residualBox.className = 'scoreBox residualScore';
+      statusBox.className = 'scoreBox proceedStatus';
+
+      return null;
+    }
+
+    const ifreq = Number(row.querySelector('.ifreq').value || 0);
+    const iprob = Number(row.querySelector('.iprob').value || 0);
+    const icons = Number(row.querySelector('.icons').value || 0);
+
+    const rfreq = Number(row.querySelector('.rfreq').value || 0);
+    const rprob = Number(row.querySelector('.rprob').value || 0);
+    const rcons = Number(row.querySelector('.rcons').value || 0);
+
+    const initialScore = ifreq * iprob * icons;
+    const residualScore = rfreq * rprob * rcons;
+
+    initialBox.textContent = 'Initial Score: ' + scoreText(initialScore);
+    residualBox.textContent = 'Residual Score: ' + scoreText(residualScore);
+    statusBox.textContent = 'Proceed Status: ' + getProceedStatus(residualScore);
+
+    initialBox.className = 'scoreBox initialScore';
+    residualBox.className = 'scoreBox residualScore';
+    statusBox.className = 'scoreBox proceedStatus';
+
+    setScoreClass(initialBox, initialScore);
+    setScoreClass(residualBox, residualScore);
+    setScoreClass(statusBox, residualScore);
+
+    return {
+      hazardName,
+      initialScore,
+      residualScore
+    };
   }
 
   function setScoreClass(el, score) {
-    el.className = 'scoreBox';
+    el.className = el.className
+      .replace(/\bscoreLow\b/g, '')
+      .replace(/\bscoreModerate\b/g, '')
+      .replace(/\bscoreHigh\b/g, '')
+      .replace(/\bscoreUnacceptable\b/g, '')
+      .trim();
+
     score = Number(score || 0);
 
     if (score >= 48) el.classList.add('scoreUnacceptable');
@@ -914,28 +957,34 @@
 
   function getRiskLevel(score) {
     score = Number(score || 0);
+
     if (score >= 48) return 'D - Unacceptable Risk';
     if (score >= 26) return 'C - High Risk';
     if (score >= 10) return 'B - Moderate Risk';
     if (score >= 1) return 'A - Low Risk';
+
     return '';
   }
 
   function getProceedStatus(score) {
     score = Number(score || 0);
+
     if (!score) return 'Not calculated';
     if (score >= 48) return 'STOP';
     if (score >= 26) return 'ESCALATE';
     if (score >= 10) return 'PROCEED WITH DOCUMENTED CONTROLS';
+
     return 'PROCEED';
   }
 
   function getFinalDecision(score) {
     score = Number(score || 0);
+
     if (score >= 48) return 'DO NOT PROCEED - at least one hazard remains unacceptable after controls.';
     if (score >= 26) return 'ESCALATE BEFORE PROCEEDING - at least one hazard remains high risk after controls.';
     if (score >= 10) return 'PROCEED WITH DOCUMENTED CONTROLS - residual risk is moderate.';
     if (score >= 1) return 'PROCEED - residual risk is low with controls in place.';
+
     return 'Not calculated.';
   }
 
@@ -947,8 +996,7 @@
       const hazardName = row.querySelector('.hazardSelect').value;
       if (!hazardName) return;
 
-      const h = buildHazardObject(row, index + 1);
-      hazards.push(h);
+      hazards.push(buildHazardObject(row, index + 1));
     });
 
     return hazards;
@@ -961,6 +1009,7 @@
     const ifreq = Number(row.querySelector('.ifreq').value || 0);
     const iprob = Number(row.querySelector('.iprob').value || 0);
     const icons = Number(row.querySelector('.icons').value || 0);
+
     const rfreq = Number(row.querySelector('.rfreq').value || 0);
     const rprob = Number(row.querySelector('.rprob').value || 0);
     const rcons = Number(row.querySelector('.rcons').value || 0);
@@ -1075,6 +1124,7 @@
       text += 'Proceed Status: ' + h.proceedStatus + '\n';
       if (h.permitTrigger) text += 'Permit / Program: ' + h.permitTrigger + '\n';
       if (h.notice) text += 'Notice: ' + h.notice + '\n';
+      if (h.notes) text += 'Notes: ' + h.notes + '\n';
       text += '\n';
     });
 
