@@ -1,4 +1,4 @@
-const CACHE_NAME = 'westshore-no-swp-risk-app-v3';
+const CACHE_NAME = 'westshore-no-swp-risk-app-v4';
 
 const APP_SHELL = [
   './',
@@ -17,40 +17,44 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
   event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      );
-    }).then(() => self.clients.claim())
+    caches.keys()
+      .then(keys => {
+        return Promise.all(
+          keys
+            .filter(key => key !== CACHE_NAME)
+            .map(key => caches.delete(key))
+        );
+      })
+      .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', event => {
   const request = event.request;
 
-  if (request.method !== 'GET') {
-    return;
-  }
+  if (request.method !== 'GET') return;
 
-  // For the main app page, try network first so updates show up.
+  // Always try to load the newest app page first.
+  // If there is no service, fall back to the cached offline version.
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
         .then(response => {
           const copy = response.clone();
+
           caches.open(CACHE_NAME).then(cache => {
             cache.put('./index.html', copy);
           });
+
           return response;
         })
         .catch(() => caches.match('./index.html'))
     );
+
     return;
   }
 
-  // For other files, cache first.
+  // For static files, use cache first, then network.
   event.respondWith(
     caches.match(request).then(cached => {
       if (cached) return cached;
@@ -64,6 +68,10 @@ self.addEventListener('fetch', event => {
 
         return response;
       });
+
+    }).catch(() => {
+      return caches.match('./index.html');
     })
   );
 });
+ 
