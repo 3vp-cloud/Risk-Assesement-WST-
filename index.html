@@ -17,7 +17,7 @@
 
     header {
       background: #1f2933;
-      color: white;
+      color: #ffffff;
       padding: 16px;
     }
 
@@ -50,7 +50,7 @@
       flex-wrap: wrap;
       gap: 6px;
       padding: 10px;
-      background: #fff;
+      background: #ffffff;
       border-bottom: 1px solid #d9dee7;
       position: sticky;
       top: 0;
@@ -59,7 +59,7 @@
 
     .tabBtn {
       border: 1px solid #c8d0dc;
-      background: white;
+      background: #ffffff;
       padding: 9px 12px;
       border-radius: 8px;
       font-weight: 700;
@@ -68,7 +68,7 @@
 
     .tabBtn.active {
       background: #1f2933;
-      color: white;
+      color: #ffffff;
     }
 
     main {
@@ -86,7 +86,7 @@
     }
 
     .card {
-      background: white;
+      background: #ffffff;
       border: 1px solid #d9dee7;
       border-radius: 10px;
       padding: 16px;
@@ -119,7 +119,7 @@
       padding: 9px;
       border: 1px solid #b9c2d0;
       border-radius: 7px;
-      background: white;
+      background: #ffffff;
       font-family: Arial, Helvetica, sans-serif;
       font-size: 14px;
     }
@@ -132,7 +132,7 @@
     .btn {
       border: none;
       background: #1f2933;
-      color: white;
+      color: #ffffff;
       padding: 10px 14px;
       border-radius: 8px;
       font-weight: 700;
@@ -235,7 +235,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
+      background: #ffffff;
     }
 
     th, td {
@@ -450,13 +450,13 @@
     <h2>Settings</h2>
 
     <label>Google Apps Script Web App URL</label>
-    <input id="endpointInput" placeholder="Paste deployed Apps Script web app URL">
+    <input id="endpointInput" placeholder="Paste deployed Apps Script /exec URL">
 
     <button class="btn" onclick="saveEndpoint()">Save Endpoint</button>
 
     <div class="notice">
-      This app must be opened once while online. After that, it can be used offline.
-      When internet/cell service returns, use the Saved Offline tab to sync assessments.
+      Paste the Apps Script web app URL ending in /exec, then click Save Endpoint.
+      This is saved on this device.
     </div>
 
     <div id="settingsResult"></div>
@@ -466,208 +466,61 @@
 </main>
 
 <script>
-  /************************************************************
-   * CHANGE THIS TO YOUR APPS SCRIPT /exec URL
-   ************************************************************/
-  const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwx4eqg_cRvtxWpJwVeY-FvhwjtOTW0gewV1AfR_V5wg1Ya_Vs8cfkz388ksp-43B3r/exec';
-
-  /************************************************************
-   * HAZARD LIBRARY
-   ************************************************************/
+  const DEFAULT_GAS_ENDPOINT = '';
 
   const HAZARDS = [
-    {
-      hazard: 'Build-up / material accumulation',
-      category: 'Physical / housekeeping',
-      permitTrigger: '',
-      controls: 'Get area washed; isolate affected area; barricade; remove loose material; control slip/trip hazard; confirm area is stable before work; communicate to affected workers.',
-      notice: 'Build-up can create slip/trip, engulfment, falling material, access, fire, or equipment hazards.',
-      escalationTrigger: 'Escalate if build-up cannot be removed, area cannot be safely accessed, or material may fall/slide/engulf.'
-    },
-    {
-      hazard: 'Working over / near water',
-      category: 'Water / drowning exposure',
-      permitTrigger: 'Boatman / water rescue controls required',
-      controls: 'Boatman / water rescue controls; PFD/life jacket; rescue equipment available; buddy system; communication method; access/egress confirmed; lighting adequate; weather/tide/current considered; rescue plan reviewed.',
-      notice: 'Working over or near water requires Boatman / water rescue controls before work proceeds.',
-      escalationTrigger: 'STOP if Boatman/water rescue controls are not available, PFD is not used, rescue equipment is missing, or communication is unreliable.'
-    },
-    {
-      hazard: 'Noise exposure / hearing damage',
-      category: 'Occupational hygiene',
-      permitTrigger: '',
-      controls: 'Hearing protection; identify noise source; limit exposure time; post/sign high-noise area; communicate requirement to crew; use quieter method where practicable.',
-      notice: 'Noise exposure can cause permanent hearing damage.',
-      escalationTrigger: 'Escalate if noise level is unknown, workers report discomfort, or appropriate hearing protection is unavailable.'
-    },
-    {
-      hazard: 'Hot work',
-      category: 'Fire / ignition source',
-      permitTrigger: 'Hot work permit and hot work program required',
-      controls: 'Hot work permit; follow hot work program; fire watch; remove or protect combustibles; extinguisher available; gas test where required; isolate adjacent hazards; post-work fire watch/inspection.',
-      notice: 'Hot work requires the applicable permit and program controls before work begins.',
-      escalationTrigger: 'STOP if permit is not available, fire watch unavailable, combustibles cannot be controlled, or fire protection is impaired.'
-    },
-    {
-      hazard: 'Lead paint / coating disturbance',
-      category: 'Chemical / toxic exposure',
-      permitTrigger: 'Lead/coating exposure-control program required',
-      controls: 'Follow lead/coating disturbance program; confirm coating content where unknown; exposure control plan; respiratory protection; containment; hygiene controls; controlled cleanup; waste handling; worker training.',
-      notice: 'Disturbing lead paint or unknown coatings can create toxic exposure.',
-      escalationTrigger: 'STOP if coating is unknown and may contain lead, exposure controls are unavailable, or trained personnel are not available.'
-    },
-    {
-      hazard: 'Confined space / restricted space',
-      category: 'Confined space / atmospheric hazard',
-      permitTrigger: 'Confined space permit/program required',
-      controls: 'Confined space permit; follow confined space program; atmospheric testing; ventilation; attendant; rescue plan; isolation/lockout; communication; entry authorization.',
-      notice: 'Confined or restricted space work requires the applicable permit/program review before entry.',
-      escalationTrigger: 'STOP if confined space status is unclear, testing is unavailable, rescue plan is not in place, or isolation is incomplete.'
-    },
-    {
-      hazard: 'Hazardous energy / lockout',
-      category: 'Energy isolation',
-      permitTrigger: 'Lockout procedure required',
-      controls: 'Lockout/isolate; verify zero energy; test before touch; block/bleed/stored energy release; use written lockout procedure; qualified person review; personal locks applied.',
-      notice: 'Hazardous energy must be controlled before work.',
-      escalationTrigger: 'STOP if energy sources are unclear, isolation cannot be verified, or procedure is not available.'
-    },
-    {
-      hazard: 'Electrical exposure',
-      category: 'Electrical',
-      permitTrigger: 'Electrical safe work / lockout program required',
-      controls: 'Qualified electrician; lockout; test before touch; arc-flash controls; appropriate PPE; restricted access; electrical permit/procedure where required.',
-      notice: 'Electrical exposure requires qualified review.',
-      escalationTrigger: 'STOP if energized work is possible and authorization/controls are not confirmed.'
-    },
-    {
-      hazard: 'Mobile equipment / traffic',
-      category: 'Mobile equipment',
-      permitTrigger: '',
-      controls: 'Traffic control plan; spotter/flagger; barricades; radio communication; speed restriction; one-way control where required; blind-corner control; pedestrian separation.',
-      notice: 'Mobile equipment and traffic hazards require positive control.',
-      escalationTrigger: 'STOP if blind approach is uncontrolled, flagger/spotter absent, or equipment/pedestrians cannot be separated.'
-    },
-    {
-      hazard: 'Working at heights',
-      category: 'Fall hazard',
-      permitTrigger: 'Fall protection / rescue plan required where applicable',
-      controls: 'Fall protection; anchor verification; rescue plan; barricade below; tools secured; ladder/scaffold inspected; competent worker; access/egress confirmed.',
-      notice: 'Fall hazards require fall protection and rescue planning where applicable.',
-      escalationTrigger: 'STOP if fall protection, anchor, rescue plan, or safe access is not confirmed.'
-    },
-    {
-      hazard: 'Safeguard removed / bypassed',
-      category: 'Machine safeguarding',
-      permitTrigger: 'Safeguard Override Program required',
-      controls: 'Use Safeguard Override Program; equivalent or greater temporary control; authorization; log; time limit; affected-worker communication; restore safeguard as soon as possible.',
-      notice: 'A removed or bypassed safeguard must be controlled through the Safeguard Override Program.',
-      escalationTrigger: 'STOP if equivalent protection is not available or affected workers may be exposed to uncontrolled hazard.'
-    },
-    {
-      hazard: 'Pinch / crush / caught between',
-      category: 'Mechanical',
-      permitTrigger: '',
-      controls: 'Lockout where required; keep clear of line of fire; barricade; use tools/fixtures; spotter; communication; verify no unexpected movement.',
-      notice: 'Pinch/crush hazards must be controlled before hands/body enter the danger zone.',
-      escalationTrigger: 'STOP if unexpected movement is possible or workers cannot stay clear of the line of fire.'
-    },
-    {
-      hazard: 'Overhead load / lifting',
-      category: 'Lifting / rigging',
-      permitTrigger: 'Lift plan / rigging controls where required',
-      controls: 'Lift plan where required; qualified rigger/operator; inspect rigging; barricade drop zone; tag lines; communication; no workers under suspended load.',
-      notice: 'Overhead load work requires control of the drop zone and competent rigging.',
-      escalationTrigger: 'STOP if workers may be under load, rigging is uncertain, or communication is poor.'
-    },
-    {
-      hazard: 'Dust / respiratory exposure',
-      category: 'Respiratory / hygiene',
-      permitTrigger: '',
-      controls: 'Dust suppression; ventilation; respiratory protection; wet method; housekeeping; limit exposure; identify material; hygiene controls.',
-      notice: 'Dust may create respiratory, visibility, combustible dust, or cleanup hazards.',
-      escalationTrigger: 'Escalate if material is unknown, dust is excessive, or respiratory controls are unavailable.'
-    },
-    {
-      hazard: 'Poor lighting / visibility',
-      category: 'Visibility',
-      permitTrigger: '',
-      controls: 'Temporary lighting; daylight-only work; spotter; reduce speed; barricade; restrict access; confirm visibility before work.',
-      notice: 'Poor visibility can increase traffic, slip/trip, fall, and equipment hazards.',
-      escalationTrigger: 'STOP if workers cannot see the task, traffic route, access, or hazard clearly.'
-    },
-    {
-      hazard: 'Chemical exposure',
-      category: 'Chemical',
-      permitTrigger: 'SDS / chemical controls required',
-      controls: 'Review SDS; correct PPE; ventilation; containment; spill kit; eyewash/shower where required; trained workers; disposal plan.',
-      notice: 'Chemical work requires SDS review and applicable exposure controls.',
-      escalationTrigger: 'STOP if chemical is unknown, SDS unavailable, or required PPE/controls are missing.'
-    },
-    {
-      hazard: 'Manual handling / ergonomics',
-      category: 'Ergonomic',
-      permitTrigger: '',
-      controls: 'Mechanical aid; team lift; reduce load; improve position; avoid awkward posture; rotate task; use proper tool.',
-      notice: 'Manual handling can create strain/sprain and musculoskeletal injury.',
-      escalationTrigger: 'Escalate if lift is beyond safe capacity or awkward posture cannot be controlled.'
-    },
-    {
-      hazard: 'Slip / trip / fall same level',
-      category: 'Walking / working surface',
-      permitTrigger: '',
-      controls: 'Clean area; get area washed if build-up present; improve lighting; mark hazard; barricade; anti-slip footwear; remove hoses/cables; maintain access.',
-      notice: 'Walking/working surface hazards must be controlled before work begins.',
-      escalationTrigger: 'STOP if access cannot be made safe.'
-    },
-    {
-      hazard: 'Contractor interface / simultaneous operations',
-      category: 'Coordination',
-      permitTrigger: '',
-      controls: 'Coordinate work groups; define work area; communication plan; supervisor contact; barricades; confirm contractor controls; pre-job meeting.',
-      notice: 'Simultaneous operations require coordination.',
-      escalationTrigger: 'Escalate if responsibilities, communication, or work boundaries are unclear.'
-    },
-    {
-      hazard: 'Fire / explosion',
-      category: 'Fire / explosion',
-      permitTrigger: 'Fire protection / hot work / emergency response review where applicable',
-      controls: 'Remove ignition source; control fuel source; fire watch; extinguisher; gas test; ventilation; emergency response notification; stop affected process where required.',
-      notice: 'Fire/explosion hazards require controls before work proceeds.',
-      escalationTrigger: 'STOP if ignition/fuel sources cannot be controlled or fire response controls are unavailable.'
-    },
-    {
-      hazard: 'Other',
-      category: 'Other',
-      permitTrigger: '',
-      controls: 'Complete task-specific hazard assessment; identify controls; involve competent person; escalate if hazard is not understood.',
-      notice: 'Other hazards require specific assessment before proceeding.',
-      escalationTrigger: 'STOP if the hazard is not understood or controls cannot be confirmed.'
-    }
-  ];
+    ['Build-up / material accumulation', 'Physical / housekeeping', '', 'Get area washed; isolate affected area; barricade; remove loose material; control slip/trip hazard; confirm area is stable before work; communicate to affected workers.', 'Build-up can create slip/trip, engulfment, falling material, access, fire, or equipment hazards.', 'Escalate if build-up cannot be removed, area cannot be safely accessed, or material may fall/slide/engulf.'],
+    ['Working over / near water', 'Water / drowning exposure', 'Boatman / water rescue controls required', 'Boatman / water rescue controls; PFD/life jacket; rescue equipment available; buddy system; communication method; access/egress confirmed; lighting adequate; weather/tide/current considered; rescue plan reviewed.', 'Working over or near water requires Boatman / water rescue controls before work proceeds.', 'STOP if Boatman/water rescue controls are not available, PFD is not used, rescue equipment is missing, or communication is unreliable.'],
+    ['Noise exposure / hearing damage', 'Occupational hygiene', '', 'Hearing protection; identify noise source; limit exposure time; post/sign high-noise area; communicate requirement to crew; use quieter method where practicable.', 'Noise exposure can cause permanent hearing damage.', 'Escalate if noise level is unknown, workers report discomfort, or appropriate hearing protection is unavailable.'],
+    ['Hot work', 'Fire / ignition source', 'Hot work permit and hot work program required', 'Hot work permit; follow hot work program; fire watch; remove or protect combustibles; extinguisher available; gas test where required; isolate adjacent hazards; post-work fire watch/inspection.', 'Hot work requires the applicable permit and program controls before work begins.', 'STOP if permit is not available, fire watch unavailable, combustibles cannot be controlled, or fire protection is impaired.'],
+    ['Lead paint / coating disturbance', 'Chemical / toxic exposure', 'Lead/coating exposure-control program required', 'Follow lead/coating disturbance program; confirm coating content where unknown; exposure control plan; respiratory protection; containment; hygiene controls; controlled cleanup; waste handling; worker training.', 'Disturbing lead paint or unknown coatings can create toxic exposure.', 'STOP if coating is unknown and may contain lead, exposure controls are unavailable, or trained personnel are not available.'],
+    ['Confined space / restricted space', 'Confined space / atmospheric hazard', 'Confined space permit/program required', 'Confined space permit; follow confined space program; atmospheric testing; ventilation; attendant; rescue plan; isolation/lockout; communication; entry authorization.', 'Confined or restricted space work requires the applicable permit/program review before entry.', 'STOP if confined space status is unclear, testing is unavailable, rescue plan is not in place, or isolation is incomplete.'],
+    ['Hazardous energy / lockout', 'Energy isolation', 'Lockout procedure required', 'Lockout/isolate; verify zero energy; test before touch; block/bleed/stored energy release; use written lockout procedure; qualified person review; personal locks applied.', 'Hazardous energy must be controlled before work.', 'STOP if energy sources are unclear, isolation cannot be verified, or procedure is not available.'],
+    ['Electrical exposure', 'Electrical', 'Electrical safe work / lockout program required', 'Qualified electrician; lockout; test before touch; arc-flash controls; appropriate PPE; restricted access; electrical permit/procedure where required.', 'Electrical exposure requires qualified review.', 'STOP if energized work is possible and authorization/controls are not confirmed.'],
+    ['Mobile equipment / traffic', 'Mobile equipment', '', 'Traffic control plan; spotter/flagger; barricades; radio communication; speed restriction; one-way control where required; blind-corner control; pedestrian separation.', 'Mobile equipment and traffic hazards require positive control.', 'STOP if blind approach is uncontrolled, flagger/spotter absent, or equipment/pedestrians cannot be separated.'],
+    ['Working at heights', 'Fall hazard', 'Fall protection / rescue plan required where applicable', 'Fall protection; anchor verification; rescue plan; barricade below; tools secured; ladder/scaffold inspected; competent worker; access/egress confirmed.', 'Fall hazards require fall protection and rescue planning where applicable.', 'STOP if fall protection, anchor, rescue plan, or safe access is not confirmed.'],
+    ['Safeguard removed / bypassed', 'Machine safeguarding', 'Safeguard Override Program required', 'Use Safeguard Override Program; equivalent or greater temporary control; authorization; log; time limit; affected-worker communication; restore safeguard as soon as possible.', 'A removed or bypassed safeguard must be controlled through the Safeguard Override Program.', 'STOP if equivalent protection is not available or affected workers may be exposed to uncontrolled hazard.'],
+    ['Pinch / crush / caught between', 'Mechanical', '', 'Lockout where required; keep clear of line of fire; barricade; use tools/fixtures; spotter; communication; verify no unexpected movement.', 'Pinch/crush hazards must be controlled before hands/body enter the danger zone.', 'STOP if unexpected movement is possible or workers cannot stay clear of the line of fire.'],
+    ['Overhead load / lifting', 'Lifting / rigging', 'Lift plan / rigging controls where required', 'Lift plan where required; qualified rigger/operator; inspect rigging; barricade drop zone; tag lines; communication; no workers under suspended load.', 'Overhead load work requires control of the drop zone and competent rigging.', 'STOP if workers may be under load, rigging is uncertain, or communication is poor.'],
+    ['Dust / respiratory exposure', 'Respiratory / hygiene', '', 'Dust suppression; ventilation; respiratory protection; wet method; housekeeping; limit exposure; identify material; hygiene controls.', 'Dust may create respiratory, visibility, combustible dust, or cleanup hazards.', 'Escalate if material is unknown, dust is excessive, or respiratory controls are unavailable.'],
+    ['Poor lighting / visibility', 'Visibility', '', 'Temporary lighting; daylight-only work; spotter; reduce speed; barricade; restrict access; confirm visibility before work.', 'Poor visibility can increase traffic, slip/trip, fall, and equipment hazards.', 'STOP if workers cannot see the task, traffic route, access, or hazard clearly.'],
+    ['Chemical exposure', 'Chemical', 'SDS / chemical controls required', 'Review SDS; correct PPE; ventilation; containment; spill kit; eyewash/shower where required; trained workers; disposal plan.', 'Chemical work requires SDS review and applicable exposure controls.', 'STOP if chemical is unknown, SDS unavailable, or required PPE/controls are missing.'],
+    ['Manual handling / ergonomics', 'Ergonomic', '', 'Mechanical aid; team lift; reduce load; improve position; avoid awkward posture; rotate task; use proper tool.', 'Manual handling can create strain/sprain and musculoskeletal injury.', 'Escalate if lift is beyond safe capacity or awkward posture cannot be controlled.'],
+    ['Slip / trip / fall same level', 'Walking / working surface', '', 'Clean area; get area washed if build-up present; improve lighting; mark hazard; barricade; anti-slip footwear; remove hoses/cables; maintain access.', 'Walking/working surface hazards must be controlled before work begins.', 'STOP if access cannot be made safe.'],
+    ['Contractor interface / simultaneous operations', 'Coordination', '', 'Coordinate work groups; define work area; communication plan; supervisor contact; barricades; confirm contractor controls; pre-job meeting.', 'Simultaneous operations require coordination.', 'Escalate if responsibilities, communication, or work boundaries are unclear.'],
+    ['Fire / explosion', 'Fire / explosion', 'Fire protection / hot work / emergency response review where applicable', 'Remove ignition source; control fuel source; fire watch; extinguisher; gas test; ventilation; emergency response notification; stop affected process where required.', 'Fire/explosion hazards require controls before work proceeds.', 'STOP if ignition/fuel sources cannot be controlled or fire response controls are unavailable.'],
+    ['Other', 'Other', '', 'Complete task-specific hazard assessment; identify controls; involve competent person; escalate if hazard is not understood.', 'Other hazards require specific assessment before proceeding.', 'STOP if the hazard is not understood or controls cannot be confirmed.']
+  ].map(r => ({
+    hazard: r[0],
+    category: r[1],
+    permitTrigger: r[2],
+    controls: r[3],
+    notice: r[4],
+    escalationTrigger: r[5]
+  }));
 
   const FREQ = [
-    { value: 1, text: '1 - Remote: task occurs less than once per year' },
-    { value: 2, text: '2 - Infrequent: task occurs once per year' },
-    { value: 3, text: '3 - Occasional: task occurs once per week' },
-    { value: 4, text: '4 - Regular: task occurs several times per week' },
-    { value: 5, text: '5 - Daily: task occurs one or more times per day' }
+    [1, '1 - Remote: task occurs less than once per year'],
+    [2, '2 - Infrequent: task occurs once per year'],
+    [3, '3 - Occasional: task occurs once per week'],
+    [4, '4 - Regular: task occurs several times per week'],
+    [5, '5 - Daily: task occurs one or more times per day']
   ];
 
   const PROB = [
-    { value: 1, text: '1 - Remote: not expected / has not occurred in past' },
-    { value: 2, text: '2 - Conceivable: could occur over time' },
-    { value: 3, text: '3 - Could occur: has occurred or could occur in this task' },
-    { value: 4, text: '4 - Likely: will occur more than 50% of the time' },
-    { value: 5, text: '5 - Will occur: expected unless controls are added' }
+    [1, '1 - Remote: not expected / has not occurred in past'],
+    [2, '2 - Conceivable: could occur over time'],
+    [3, '3 - Could occur: has occurred or could occur in this task'],
+    [4, '4 - Likely: will occur more than 50% of the time'],
+    [5, '5 - Will occur: expected unless controls are added']
   ];
 
   const CONS = [
-    { value: 1, text: '1 - Negligible: no injury or first aid only' },
-    { value: 2, text: '2 - Minor injury: no lost time expected' },
-    { value: 3, text: '3 - Moderate injury: medical aid or lost time possible' },
-    { value: 4, text: '4 - Major injury: serious injury or permanent disability possible' },
-    { value: 5, text: '5 - Catastrophic: fatality or multiple major injuries possible' }
+    [1, '1 - Negligible: no injury or first aid only'],
+    [2, '2 - Minor injury: no lost time expected'],
+    [3, '3 - Moderate injury: medical aid or lost time possible'],
+    [4, '4 - Major injury: serious injury or permanent disability possible'],
+    [5, '5 - Catastrophic: fatality or multiple major injuries possible']
   ];
 
   let hazardRowCount = 0;
@@ -686,9 +539,7 @@
 
   function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(err => {
-        console.log('Service worker registration failed', err);
-      });
+      navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
     }
   }
 
@@ -711,7 +562,6 @@
   function showTab(e, id) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
-
     document.getElementById(id).classList.add('active');
     e.target.classList.add('active');
 
@@ -723,9 +573,7 @@
     document.getElementById('hazardRows').innerHTML = '';
     hazardRowCount = 0;
 
-    for (let i = 0; i < 10; i++) {
-      addHazardRow();
-    }
+    for (let i = 0; i < 10; i++) addHazardRow();
   }
 
   function addHazardRow() {
@@ -745,9 +593,7 @@
       <div class="grid">
         <div>
           <label>Hazard</label>
-          <select class="hazardSelect" onchange="hazardChanged(${id})">
-            ${hazardOptionsHtml()}
-          </select>
+          <select class="hazardSelect" onchange="hazardChanged(${id})">${hazardOptionsHtml()}</select>
         </div>
         <div>
           <label>Category</label>
@@ -818,7 +664,7 @@
 
   function riskOptionsHtml(list) {
     return '<option value="">Select</option>' +
-      list.map(item => `<option value="${item.value}">${esc(item.text)}</option>`).join('');
+      list.map(item => `<option value="${item[0]}">${esc(item[1])}</option>`).join('');
   }
 
   function hazardChanged(id) {
@@ -829,13 +675,13 @@
     row.querySelector('.category').value = hazard.category || '';
     row.querySelector('.controls').value = hazard.controls || '';
 
-    const notice = row.querySelector('.hazardNotice');
     let text = '';
 
     if (hazard.permitTrigger) text += 'PERMIT / PROGRAM TRIGGER:\n' + hazard.permitTrigger + '\n\n';
     if (hazard.notice) text += 'NOTICE:\n' + hazard.notice + '\n\n';
     if (hazard.escalationTrigger) text += 'ESCALATION TRIGGER:\n' + hazard.escalationTrigger;
 
+    const notice = row.querySelector('.hazardNotice');
     notice.className = hazard.permitTrigger || hazard.escalationTrigger ? 'notice warning hazardNotice' : 'notice hazardNotice';
     notice.textContent = text || 'No specific permit/program trigger listed. Complete risk ranking and controls.';
 
@@ -859,13 +705,11 @@
 
     rows.forEach(row => {
       const result = updateRowScoreDisplay(row);
-
-      if (!result || !result.hazardName) return;
+      if (!result) return;
 
       completedHazards++;
-
-      highInitial = Math.max(highInitial, Number(result.initialScore || 0));
-      highResidual = Math.max(highResidual, Number(result.residualScore || 0));
+      highInitial = Math.max(highInitial, result.initialScore);
+      highResidual = Math.max(highResidual, result.residualScore);
     });
 
     const summary = document.getElementById('finalSummary');
@@ -881,7 +725,8 @@
       'Highest Residual Risk: ' + scoreText(highResidual) + '\n\n' +
       'Final Decision:\n' + getFinalDecision(highResidual);
 
-    setScoreClass(summary, highResidual);
+    summary.className = 'scoreBox';
+    applyScoreClass(summary, highResidual);
   }
 
   function updateRowScoreDisplay(row) {
@@ -892,13 +737,13 @@
     const statusBox = row.querySelector('.proceedStatus');
 
     if (!hazardName) {
-      initialBox.textContent = 'Initial Score: not calculated';
-      residualBox.textContent = 'Residual Score: not calculated';
-      statusBox.textContent = 'Proceed Status: not calculated';
-
       initialBox.className = 'scoreBox initialScore';
       residualBox.className = 'scoreBox residualScore';
       statusBox.className = 'scoreBox proceedStatus';
+
+      initialBox.textContent = 'Initial Score: not calculated';
+      residualBox.textContent = 'Residual Score: not calculated';
+      statusBox.textContent = 'Proceed Status: not calculated';
 
       return null;
     }
@@ -914,33 +759,25 @@
     const initialScore = ifreq * iprob * icons;
     const residualScore = rfreq * rprob * rcons;
 
-    initialBox.textContent = 'Initial Score: ' + scoreText(initialScore);
-    residualBox.textContent = 'Residual Score: ' + scoreText(residualScore);
-    statusBox.textContent = 'Proceed Status: ' + getProceedStatus(residualScore);
-
     initialBox.className = 'scoreBox initialScore';
     residualBox.className = 'scoreBox residualScore';
     statusBox.className = 'scoreBox proceedStatus';
 
-    setScoreClass(initialBox, initialScore);
-    setScoreClass(residualBox, residualScore);
-    setScoreClass(statusBox, residualScore);
+    initialBox.textContent = 'Initial Score: ' + scoreText(initialScore);
+    residualBox.textContent = 'Residual Score: ' + scoreText(residualScore);
+    statusBox.textContent = 'Proceed Status: ' + getProceedStatus(residualScore);
+
+    applyScoreClass(initialBox, initialScore);
+    applyScoreClass(residualBox, residualScore);
+    applyScoreClass(statusBox, residualScore);
 
     return {
-      hazardName,
       initialScore,
       residualScore
     };
   }
 
-  function setScoreClass(el, score) {
-    el.className = el.className
-      .replace(/\bscoreLow\b/g, '')
-      .replace(/\bscoreModerate\b/g, '')
-      .replace(/\bscoreHigh\b/g, '')
-      .replace(/\bscoreUnacceptable\b/g, '')
-      .trim();
-
+  function applyScoreClass(el, score) {
     score = Number(score || 0);
 
     if (score >= 48) el.classList.add('scoreUnacceptable');
@@ -986,6 +823,21 @@
     if (score >= 1) return 'PROCEED - residual risk is low with controls in place.';
 
     return 'Not calculated.';
+  }
+
+  function collectAssessment() {
+    calculateAllRows();
+
+    const form = document.getElementById('assessmentForm');
+    const fd = new FormData(form);
+    const payload = {};
+
+    fd.forEach((value, key) => payload[key] = value);
+
+    payload.hazards = collectHazards();
+    payload.localAssessmentId = 'LOCAL-' + Date.now();
+
+    return payload;
   }
 
   function collectHazards() {
@@ -1039,21 +891,6 @@
     };
   }
 
-  function collectAssessment() {
-    calculateAllRows();
-
-    const form = document.getElementById('assessmentForm');
-    const fd = new FormData(form);
-    const payload = {};
-
-    fd.forEach((value, key) => payload[key] = value);
-
-    payload.hazards = collectHazards();
-    payload.localAssessmentId = 'LOCAL-' + Date.now();
-
-    return payload;
-  }
-
   async function submitAssessment(e) {
     e.preventDefault();
 
@@ -1072,64 +909,72 @@
     }
 
     try {
-      await syncPayload(payload);
-      setResult('submitResult', 'Assessment sent for sync. Check Google Sheet to confirm.', 'notice success');
+      await postToAppsScript(payload);
+      setResult('submitResult', 'Assessment submitted. Check the Google Sheet to confirm it landed.', 'notice success');
       document.getElementById('assessmentForm').reset();
       setToday();
       resetToTenRows();
     } catch (err) {
       saveOffline(payload);
-      setResult('submitResult', 'Sync failed. Assessment saved offline.\n\n' + err.message, 'notice warning');
+      setResult('submitResult', 'Submission failed. Assessment saved offline.\n\n' + err.message, 'notice warning');
       renderOfflineQueue();
     }
   }
 
-  async function syncPayload(payload) {
-    const endpoint = getEndpoint();
+  function postToAppsScript(payload) {
+    return new Promise((resolve, reject) => {
+      const endpoint = getEndpoint();
 
-    if (!endpoint || endpoint.indexOf('PASTE_YOUR') !== -1) {
-      throw new Error('Apps Script endpoint is not configured.');
-    }
+      if (!endpoint || endpoint.indexOf('/exec') === -1) {
+        reject(new Error('Apps Script endpoint is missing or does not end in /exec. Go to Settings and save the correct URL.'));
+        return;
+      }
 
-    await fetch(endpoint, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: JSON.stringify({
-        action: 'submitAssessment',
-        payload
-      })
+      const iframeName = 'hiddenPostFrame_' + Date.now();
+
+      const iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = endpoint;
+      form.target = iframeName;
+      form.style.display = 'none';
+
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'payload';
+      input.value = JSON.stringify(payload);
+
+      form.appendChild(input);
+      document.body.appendChild(form);
+
+      let done = false;
+
+      iframe.onload = () => {
+        if (done) return;
+        done = true;
+
+        setTimeout(() => {
+          form.remove();
+          iframe.remove();
+          resolve(true);
+        }, 300);
+      };
+
+      form.submit();
+
+      setTimeout(() => {
+        if (done) return;
+        done = true;
+
+        form.remove();
+        iframe.remove();
+        resolve(true);
+      }, 3500);
     });
-  }
-
-  function previewAssessment() {
-    const payload = collectAssessment();
-    const box = document.getElementById('previewBox');
-
-    let text = '';
-    text += 'NO-SWP / NON-ROUTINE TASK RISK ASSESSMENT\n';
-    text += 'Date: ' + (payload.assessmentDate || '') + '\n';
-    text += 'Shift: ' + (payload.shift || '') + '\n';
-    text += 'Crew: ' + (payload.crew || '') + '\n';
-    text += 'Department: ' + (payload.department || '') + '\n';
-    text += 'Area: ' + (payload.area || '') + '\n';
-    text += 'Equipment: ' + (payload.equipment || '') + '\n';
-    text += 'Task: ' + (payload.taskDescription || '') + '\n';
-    text += 'SWP Status: ' + (payload.swpStatus || '') + '\n\n';
-
-    payload.hazards.forEach((h, i) => {
-      text += 'Hazard ' + (i + 1) + ': ' + h.hazard + '\n';
-      text += 'Initial Risk: ' + h.initialScore + ' - ' + h.initialLevel + '\n';
-      text += 'Controls: ' + h.controls + '\n';
-      text += 'Residual Risk: ' + h.residualScore + ' - ' + h.residualLevel + '\n';
-      text += 'Proceed Status: ' + h.proceedStatus + '\n';
-      if (h.permitTrigger) text += 'Permit / Program: ' + h.permitTrigger + '\n';
-      if (h.notice) text += 'Notice: ' + h.notice + '\n';
-      if (h.notes) text += 'Notes: ' + h.notes + '\n';
-      text += '\n';
-    });
-
-    box.style.display = 'block';
-    box.textContent = text;
   }
 
   function saveOffline(payload) {
@@ -1189,7 +1034,7 @@
 
     for (const item of queue) {
       try {
-        await syncPayload(item);
+        await postToAppsScript(item);
         synced++;
       } catch {
         remaining.push(item);
@@ -1206,6 +1051,38 @@
     if (!confirm('Clear all offline saved assessments on this device?')) return;
     localStorage.setItem('noSwpOfflineQueue', JSON.stringify([]));
     renderOfflineQueue();
+  }
+
+  function previewAssessment() {
+    const payload = collectAssessment();
+    const box = document.getElementById('previewBox');
+
+    let text = '';
+
+    text += 'NO-SWP / NON-ROUTINE TASK RISK ASSESSMENT\n';
+    text += 'Date: ' + (payload.assessmentDate || '') + '\n';
+    text += 'Shift: ' + (payload.shift || '') + '\n';
+    text += 'Crew: ' + (payload.crew || '') + '\n';
+    text += 'Department: ' + (payload.department || '') + '\n';
+    text += 'Area: ' + (payload.area || '') + '\n';
+    text += 'Equipment: ' + (payload.equipment || '') + '\n';
+    text += 'Task: ' + (payload.taskDescription || '') + '\n';
+    text += 'SWP Status: ' + (payload.swpStatus || '') + '\n\n';
+
+    payload.hazards.forEach((h, i) => {
+      text += 'Hazard ' + (i + 1) + ': ' + h.hazard + '\n';
+      text += 'Initial Risk: ' + h.initialScore + ' - ' + h.initialLevel + '\n';
+      text += 'Controls: ' + h.controls + '\n';
+      text += 'Residual Risk: ' + h.residualScore + ' - ' + h.residualLevel + '\n';
+      text += 'Proceed Status: ' + h.proceedStatus + '\n';
+      if (h.permitTrigger) text += 'Permit / Program: ' + h.permitTrigger + '\n';
+      if (h.notice) text += 'Notice: ' + h.notice + '\n';
+      if (h.notes) text += 'Notes: ' + h.notes + '\n';
+      text += '\n';
+    });
+
+    box.style.display = 'block';
+    box.textContent = text;
   }
 
   function renderHazardLibrary() {
@@ -1234,11 +1111,11 @@
 
   function loadEndpoint() {
     const saved = localStorage.getItem('gasEndpoint') || '';
-    document.getElementById('endpointInput').value = saved || GAS_ENDPOINT;
+    document.getElementById('endpointInput').value = saved || DEFAULT_GAS_ENDPOINT;
   }
 
   function getEndpoint() {
-    return localStorage.getItem('gasEndpoint') || GAS_ENDPOINT;
+    return localStorage.getItem('gasEndpoint') || DEFAULT_GAS_ENDPOINT;
   }
 
   function getRow(id) {
