@@ -1,4 +1,4 @@
-const CACHE_NAME = 'westshore-no-swp-risk-app-v1';
+const CACHE_NAME = 'westshore-no-swp-risk-app-v3';
 
 const APP_SHELL = [
   './',
@@ -7,10 +7,11 @@ const APP_SHELL = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
+
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
   );
 });
 
@@ -33,25 +34,36 @@ self.addEventListener('fetch', event => {
     return;
   }
 
+  // For the main app page, try network first so updates show up.
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put('./index.html', copy);
+          });
+          return response;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // For other files, cache first.
   event.respondWith(
     caches.match(request).then(cached => {
       if (cached) return cached;
 
-      return fetch(request)
-        .then(response => {
-          const copy = response.clone();
+      return fetch(request).then(response => {
+        const copy = response.clone();
 
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(request, copy);
-          });
-
-          return response;
-        })
-        .catch(() => {
-          if (request.mode === 'navigate') {
-            return caches.match('./index.html');
-          }
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(request, copy);
         });
+
+        return response;
+      });
     })
   );
 });
