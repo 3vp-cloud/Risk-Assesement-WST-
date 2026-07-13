@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>No-SWP Risk Assessment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1f2933">
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    body {
+      margin: 0;
+      background: #f4f6f8;
+      color: #1f2933;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    header {
+      background: #1f2933;
+      color: white;
+      padding: 16px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .status {
+      padding: 10px 14px;
+      background: #e8eef6;
+      font-weight: 700;
+      font-size: 13px;
+      border-bottom: 1px solid #cbd5e1;
+    }
+
+    .status.offline {
+      background: #fff4e5;
+      color: #7a3e00;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px;
+      background: #fff;
+      border-bottom: 1px solid #d9dee7;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .tabBtn {
+      border: 1px solid #c8d0dc;
+      background: white;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tabBtn.active {
+      background: #1f2933;
+      color: white;
+    }
+
+    main {
+      max-width: 1250px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #d9dee7;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    label {
+      display: block;
+      font-weight: 700;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 9px;
+      border: 1px solid #b9c2d0;
+      border-radius: 7px;
+      background: white;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    .btn {
+      border: none;
+      background: #1f2933;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 4px 4px 4px 0;
+    }
+
+    .btn.secondary {
+      background: #465465;
+    }
+
+    .btn.green {
+      background: #166534;
+    }
+
+    .btn.danger {
+      background: #8a1f1f;
+    }
+
+    .notice {
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      background: #eef4ff;
+      border: 1px solid #bcd3ff;
+      white-space: pre-wrap;
+    }
+
+    .warning {
+      background: #fff4e5;
+      border-color: #ffd18a;
+    }
+
+    .critical {
+      background: #ffecec;
+      border-color: #ffb7b7;
+    }
+
+    .success {
+      background: #eaf8ed;
+      border-color: #a7dfb0;
+    }
+
+    .hazardRow {
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 14px;
+      background: #fbfcfe;
+    }
+
+    .hazardHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .hazardHeader h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .scoreBox {
+      padding: 10px;
+      border-radius: 8px;
+      background: #eef1f5;
+      border: 1px solid #cbd5e1;
+      font-weight: 700;
+      white-space: pre-wrap;
+      margin: 10px 0;
+    }
+
+    .scoreLow {
+      background: #eaf8ed;
+      border-color: #a7dfb0;
+    }
+
+    .scoreModerate {
+      background: #fff9db;
+      border-color: #f4d35e;
+    }
+
+    .scoreHigh {
+      background: #fff4e5;
+      border-color: #ffbd6b;
+    }
+
+    .scoreUnacceptable {
+      background: #ffecec;
+      border-color: #ff9b9b;
+    }
+
+    .small {
+      font-size: 12px;
+      color: #5c6775;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #d9dee7;
+      padding: 8px;
+      font-size: 13px;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef1f5;
+      text-align: left;
+    }
+
+    .copybox {
+      white-space: pre-wrap;
+      font-family: Consolas, monospace;
+      background: #f0f2f5;
+      padding: 12px;
+      border: 1px solid #cbd3df;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 850px) {
+      .grid, .grid3 {
+        grid-template-columns: 1fr;
+      }
+
+      .hazardHeader {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <h1>No-SWP / Non-Routine Task Risk Assessment</h1>
+  <p>Offline-capable field assessment for tasks without an approved or available safe work procedure.</p>
+</header>
+
+<div id="connectionStatus" class="status">Checking connection...</div>
+
+<div class="tabs">
+  <button class="tabBtn active" onclick="showTab(event, 'newAssessment')">New Assessment</button>
+  <button class="tabBtn" onclick="showTab(event, 'offlineQueue')">Saved Offline</button>
+  <button class="tabBtn" onclick="showTab(event, 'hazardLibrary')">Hazard Library</button>
+  <button class="tabBtn" onclick="showTab(event, 'settings')">Settings</button>
+</div>
+
+<main>
+
+<section id="newAssessment" class="panel active">
+  <form id="assessmentForm" onsubmit="submitAssessment(event)">
+
+    <div class="card">
+      <h2>Task Information</h2>
+
+      <div class="grid3">
+        <div>
+          <label>Date</label>
+          <input type="date" name="assessmentDate" id="assessmentDate" required>
+        </div>
+
+        <div>
+          <label>Shift</label>
+          <select name="shift" required>
+            <option value="">Select</option>
+            <option>Days</option>
+            <option>Afternoons</option>
+            <option>Graveyards</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Crew</label>
+          <select name="crew">
+            <option value="">Select</option>
+            <option>A Crew</option>
+            <option>B Crew</option>
+            <option>C Crew</option>
+            <option>D Crew</option>
+            <option>E Crew</option>
+            <option>Contractor</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid3">
+        <div>
+          <label>Department</label>
+          <select name="department" required>
+            <option value="">Select</option>
+            <option>Operations</option>
+            <option>Maintenance</option>
+            <option>Electrical</option>
+            <option>Mechanical</option>
+            <option>Engineering</option>
+            <option>Contractor</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Area / Location</label>
+          <input name="area" required placeholder="e.g., Shiploader 1, Substation 2">
+        </div>
+
+        <div>
+          <label>Equipment / System</label>
+          <input name="equipment" placeholder="Equipment or system name">
+        </div>
+      </div>
+
+      <label>Task Description</label>
+      <textarea name="taskDescription" required placeholder="Describe the task being assessed."></textarea>
+
+      <div class="grid">
+        <div>
+          <label>SWP Status</label>
+          <select name="swpStatus" required>
+            <option value="">Select</option>
+            <option>No approved SWP exists</option>
+            <option>SWP exists but is not accessible</option>
+            <option>SWP is outdated</option>
+            <option>SWP does not match field conditions</option>
+            <option>Scope changed from existing SWP</option>
+            <option>Emergency / urgent work before SWP available</option>
+            <option>New equipment / process</option>
+            <option>Contractor task not covered by SWP</option>
+            <option>Other procedure issue</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Reason No SWP / Procedure Issue</label>
+          <input name="reasonNoSwp" placeholder="Brief reason">
+        </div>
+      </div>
+
+      <div class="grid3">
+        <div>
+          <label>Foreman / Supervisor</label>
+          <input name="foreman" required>
+        </div>
+
+        <div>
+          <label>Completed By</label>
+          <input name="completedBy" required>
+        </div>
+
+        <div>
+          <label>Workers Involved</label>
+          <input name="workersInvolved" placeholder="Names or crew">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Hazard Assessment Rows</h2>
+      <p class="small">Each hazard must be ranked separately before and after controls.</p>
+
+      <div id="hazardRows"></div>
+
+      <button type="button" class="btn secondary" onclick="addHazardRow()">Add Hazard Row</button>
+      <button type="button" class="btn secondary" onclick="resetToTenRows()">Reset to 10 Rows</button>
+    </div>
+
+    <div class="card">
+      <h2>Final Assessment</h2>
+
+      <div id="finalSummary" class="scoreBox">Complete hazard rows to calculate final decision.</div>
+
+      <label>HPP / SWP Follow-Up Notes</label>
+      <textarea name="hppNotes" placeholder="What procedure needs to be created, updated, made accessible, or reviewed?"></textarea>
+
+      <button type="button" class="btn secondary" onclick="calculateAllRows()">Recalculate</button>
+      <button type="button" class="btn secondary" onclick="previewAssessment()">Preview Summary</button>
+      <button type="submit" class="btn green">Submit / Sync Assessment</button>
+
+      <div id="submitResult"></div>
+      <div id="previewBox" class="copybox" style="display:none;"></div>
+    </div>
+
+  </form>
+</section>
+
+<section id="offlineQueue" class="panel">
+  <div class="card">
+    <h2>Saved Offline</h2>
+    <p class="small">These assessments are saved on this device and have not yet synced.</p>
+
+    <button class="btn green" onclick="syncOfflineQueue()">Sync Saved Assessments</button>
+    <button class="btn danger" onclick="clearOfflineQueue()">Clear Offline Queue</button>
+
+    <div id="offlineQueueList"></div>
+  </div>
+</section>
+
+<section id="hazardLibrary" class="panel">
+  <div class="card">
+    <h2>Hazard Library</h2>
+    <div id="hazardLibraryTable"></div>
+  </div>
+</section>
+
+<section id="settings" class="panel">
+  <div class="card">
+    <h2>Settings</h2>
+
+    <label>Google Apps Script Web App URL</label>
+    <input id="endpointInput" placeholder="Paste deployed Apps Script web app URL">
+
+    <button class="btn" onclick="saveEndpoint()">Save Endpoint</button>
+
+    <div class="notice">
+      This app must be opened once while online. After that, it can be used offline.
+      When internet/cell service returns, use the Saved Offline tab to sync assessments.
+    </div>
+
+    <div id="settingsResult"></div>
+  </div>
+</section>
+
+</main>
+
+<script>
+  /************************************************************
+   * SET YOUR APPS SCRIPT ENDPOINT HERE
+   ************************************************************/
+  const GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwx4eqg_cRvtxWpJwVeY-FvhwjtOTW0gewV1AfR_V5wg1Ya_Vs8cfkz388ksp-43B3r/exec';
+
+  /************************************************************
+   * HAZARD LIBRARY
+   ************************************************************/
+
+  const HAZARDS = [
+    {
+      hazard: 'Build-up / material accumulation',
+      category: 'Physical / housekeeping',
+      permitTrigger: '',
+      controls: 'Get area washed; isolate affected area; barricade; remove loose material; control slip/trip hazard; confirm area is stable before work; communicate to affected workers.',
+      notice: 'Build-up can create slip/trip, engulfment, falling material, access, fire, or equipment hazards.',
+      escalationTrigger: 'Escalate if build-up cannot be removed, area cannot be safely accessed, or material may fall/slide/engulf.'
+    },
+    {
+      hazard: 'Working over / near water',
+      category: 'Water / drowning exposure',
+      permitTrigger: 'Boatman / water rescue controls required',
+      controls: 'Boatman / water rescue controls; PFD/life jacket; rescue equipment available; buddy system; communication method; access/egress confirmed; lighting adequate; weather/tide/current considered; rescue plan reviewed.',
+      notice: 'Working over or near water requires Boatman / water rescue controls before work proceeds.',
+      escalationTrigger: 'STOP if Boatman/water rescue controls are not available, PFD is not used, rescue equipment is missing, or communication is unreliable.'
+    },
+    {
+      hazard: 'Noise exposure / hearing damage',
+      category: 'Occupational hygiene',
+      permitTrigger: '',
+      controls: 'Hearing protection; identify noise source; limit exposure time; post/sign high-noise area; communicate requirement to crew; use quieter method where practicable.',
+      notice: 'Noise exposure can cause permanent hearing damage.',
+      escalationTrigger: 'Escalate if noise level is unknown, workers report discomfort, or appropriate hearing protection is unavailable.'
+    },
+    {
+      hazard: 'Hot work',
+      category: 'Fire / ignition source',
+      permitTrigger: 'Hot work permit and hot work program required',
+      controls: 'Hot work permit; follow hot work program; fire watch; remove or protect combustibles; extinguisher available; gas test where required; isolate adjacent hazards; post-work fire watch/inspection.',
+      notice: 'Hot work requires the applicable permit and program controls before work begins.',
+      escalationTrigger: 'STOP if permit is not available, fire watch unavailable, combustibles cannot be controlled, or fire protection is impaired.'
+    },
+    {
+      hazard: 'Lead paint / coating disturbance',
+      category: 'Chemical / toxic exposure',
+      permitTrigger: 'Lead/coating exposure-control program required',
+      controls: 'Follow lead/coating disturbance program; confirm coating content where unknown; exposure control plan; respiratory protection; containment; hygiene controls; controlled cleanup; waste handling; worker training.',
+      notice: 'Disturbing lead paint or unknown coatings can create toxic exposure.',
+      escalationTrigger: 'STOP if coating is unknown and may contain lead, exposure controls are unavailable, or trained personnel are not available.'
+    },
+    {
+      hazard: 'Confined space / restricted space',
+      category: 'Confined space / atmospheric hazard',
+      permitTrigger: 'Confined space permit/program required',
+      controls: 'Confined space permit; follow confined space program; atmospheric testing; ventilation; attendant; rescue plan; isolation/lockout; communication; entry authorization.',
+      notice: 'Confined or restricted space work requires the applicable permit/program review before entry.',
+      escalationTrigger: 'STOP if confined space status is unclear, testing is unavailable, rescue plan is not in place, or isolation is incomplete.'
+    },
+    {
+      hazard: 'Hazardous energy / lockout',
+      category: 'Energy isolation',
+      permitTrigger: 'Lockout procedure required',
+      controls: 'Lockout/isolate; verify zero energy; test before touch; block/bleed/stored energy release; use written lockout procedure; qualified person review; personal locks applied.',
+      notice: 'Hazardous energy must be controlled before work.',
+      escalationTrigger: 'STOP if energy sources are unclear, isolation cannot be verified, or procedure is not available.'
+    },
+    {
+      hazard: 'Electrical exposure',
+      category: 'Electrical',
+      permitTrigger: 'Electrical safe work / lockout program required',
+      controls: 'Qualified electrician; lockout; test before touch; arc-flash controls; appropriate PPE; restricted access; electrical permit/procedure where required.',
+      notice: 'Electrical exposure requires qualified review.',
+      escalationTrigger: 'STOP if energized work is possible and authorization/controls are not confirmed.'
+    },
+    {
+      hazard: 'Mobile equipment / traffic',
+      category: 'Mobile equipment',
+      permitTrigger: '',
+      controls: 'Traffic control plan; spotter/flagger; barricades; radio communication; speed restriction; one-way control where required; blind-corner control; pedestrian separation.',
+      notice: 'Mobile equipment and traffic hazards require positive control.',
+      escalationTrigger: 'STOP if blind approach is uncontrolled, flagger/spotter absent, or equipment/pedestrians cannot be separated.'
+    },
+    {
+      hazard: 'Working at heights',
+      category: 'Fall hazard',
+      permitTrigger: 'Fall protection / rescue plan required where applicable',
+      controls: 'Fall protection; anchor verification; rescue plan; barricade below; tools secured; ladder/scaffold inspected; competent worker; access/egress confirmed.',
+      notice: 'Fall hazards require fall protection and rescue planning where applicable.',
+      escalationTrigger: 'STOP if fall protection, anchor, rescue plan, or safe access is not confirmed.'
+    },
+    {
+      hazard: 'Safeguard removed / bypassed',
+      category: 'Machine safeguarding',
+      permitTrigger: 'Safeguard Override Program required',
+      controls: 'Use Safeguard Override Program; equivalent or greater temporary control; authorization; log; time limit; affected-worker communication; restore safeguard as soon as possible.',
+      notice: 'A removed or bypassed safeguard must be controlled through the Safeguard Override Program.',
+      escalationTrigger: 'STOP if equivalent protection is not available or affected workers may be exposed to uncontrolled hazard.'
+    },
+    {
+      hazard: 'Pinch / crush / caught between',
+      category: 'Mechanical',
+      permitTrigger: '',
+      controls: 'Lockout where required; keep clear of line of fire; barricade; use tools/fixtures; spotter; communication; verify no unexpected movement.',
+      notice: 'Pinch/crush hazards must be controlled before hands/body enter the danger zone.',
+      escalationTrigger: 'STOP if unexpected movement is possible or workers cannot stay clear of the line of fire.'
+    },
+    {
+      hazard: 'Overhead load / lifting',
+      category: 'Lifting / rigging',
+      permitTrigger: 'Lift plan / rigging controls where required',
+      controls: 'Lift plan where required; qualified rigger/operator; inspect rigging; barricade drop zone; tag lines; communication; no workers under suspended load.',
+      notice: 'Overhead load work requires control of the drop zone and competent rigging.',
+      escalationTrigger: 'STOP if workers may be under load, rigging is uncertain, or communication is poor.'
+    },
+    {
+      hazard: 'Dust / respiratory exposure',
+      category: 'Respiratory / hygiene',
+      permitTrigger: '',
+      controls: 'Dust suppression; ventilation; respiratory protection; wet method; housekeeping; limit exposure; identify material; hygiene controls.',
+      notice: 'Dust may create respiratory, visibility, combustible dust, or cleanup hazards.',
+      escalationTrigger: 'Escalate if material is unknown, dust is excessive, or respiratory controls are unavailable.'
+    },
+    {
+      hazard: 'Poor lighting / visibility',
+      category: 'Visibility',
+      permitTrigger: '',
+      controls: 'Temporary lighting; daylight-only work; spotter; reduce speed; barricade; restrict access; confirm visibility before work.',
+      notice: 'Poor visibility can increase traffic, slip/trip, fall, and equipment hazards.',
+      escalationTrigger: 'STOP if workers cannot see the task, traffic route, access, or hazard clearly.'
+    },
+    {
+      hazard: 'Chemical exposure',
+      category: 'Chemical',
+      permitTrigger: 'SDS / chemical controls required',
+      controls: 'Review SDS; correct PPE; ventilation; containment; spill kit; eyewash/shower where required; trained workers; disposal plan.',
+      notice: 'Chemical work requires SDS review and applicable exposure controls.',
+      escalationTrigger: 'STOP if chemical is unknown, SDS unavailable, or required PPE/controls are missing.'
+    },
+    {
+      hazard: 'Manual handling / ergonomics',
+      category: 'Ergonomic',
+      permitTrigger: '',
+      controls: 'Mechanical aid; team lift; reduce load; improve position; avoid awkward posture; rotate task; use proper tool.',
+      notice: 'Manual handling can create strain/sprain and musculoskeletal injury.',
+      escalationTrigger: 'Escalate if lift is beyond safe capacity or awkward posture cannot be controlled.'
+    },
+    {
+      hazard: 'Slip / trip / fall same level',
+      category: 'Walking / working surface',
+      permitTrigger: '',
+      controls: 'Clean area; get area washed if build-up present; improve lighting; mark hazard; barricade; anti-slip footwear; remove hoses/cables; maintain access.',
+      notice: 'Walking/working surface hazards must be controlled before work begins.',
+      escalationTrigger: 'STOP if access cannot be made safe.'
+    },
+    {
+      hazard: 'Contractor interface / simultaneous operations',
+      category: 'Coordination',
+      permitTrigger: '',
+      controls: 'Coordinate work groups; define work area; communication plan; supervisor contact; barricades; confirm contractor controls; pre-job meeting.',
+      notice: 'Simultaneous operations require coordination.',
+      escalationTrigger: 'Escalate if responsibilities, communication, or work boundaries are unclear.'
+    },
+    {
+      hazard: 'Fire / explosion',
+      category: 'Fire / explosion',
+      permitTrigger: 'Fire protection / hot work / emergency response review where applicable',
+      controls: 'Remove ignition source; control fuel source; fire watch; extinguisher; gas test; ventilation; emergency response notification; stop affected process where required.',
+      notice: 'Fire/explosion hazards require controls before work proceeds.',
+      escalationTrigger: 'STOP if ignition/fuel sources cannot be controlled or fire response controls are unavailable.'
+    },
+    {
+      hazard: 'Other',
+      category: 'Other',
+      permitTrigger: '',
+      controls: 'Complete task-specific hazard assessment; identify controls; involve competent person; escalate if hazard is not understood.',
+      notice: 'Other hazards require specific assessment before proceeding.',
+      escalationTrigger: 'STOP if the hazard is not understood or controls cannot be confirmed.'
+    }
+  ];
+
+  const FREQ = [
+    { value: 1, text: '1 - Remote: task occurs less than once per year' },
+    { value: 2, text: '2 - Infrequent: task occurs once per year' },
+    { value: 3, text: '3 - Occasional: task occurs once per week' },
+    { value: 4, text: '4 - Regular: task occurs several times per week' },
+    { value: 5, text: '5 - Daily: task occurs one or more times per day' }
+  ];
+
+  const PROB = [
+    { value: 1, text: '1 - Remote: not expected / has not occurred in past' },
+    { value: 2, text: '2 - Conceivable: could occur over time' },
+    { value: 3, text: '3 - Could occur: has occurred or could occur in this task' },
+    { value: 4, text: '4 - Likely: will occur more than 50% of the time' },
+    { value: 5, text: '5 - Will occur: expected unless controls are added' }
+  ];
+
+  const CONS = [
+    { value: 1, text: '1 - Negligible: no injury or first aid only' },
+    { value: 2, text: '2 - Minor injury: no lost time expected' },
+    { value: 3, text: '3 - Moderate injury: medical aid or lost time possible' },
+    { value: 4, text: '4 - Major injury: serious injury or permanent disability possible' },
+    { value: 5, text: '5 - Catastrophic: fatality or multiple major injuries possible' }
+  ];
+
+  let hazardRowCount = 0;
+
+  window.addEventListener('load', () => {
+    registerServiceWorker();
+    setToday();
+    updateConnectionStatus();
+    window.addEventListener('online', updateConnectionStatus);
+    window.addEventListener('offline', updateConnectionStatus);
+    loadEndpoint();
+    resetToTenRows();
+    renderOfflineQueue();
+    renderHazardLibrary();
+  });
+
+  function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('Service worker registration failed', err));
+    }
+  }
+
+  function setToday() {
+    document.getElementById('assessmentDate').value = new Date().toISOString().slice(0, 10);
+  }
+
+  function updateConnectionStatus() {
+    const bar = document.getElementById('connectionStatus');
+    if (navigator.onLine) {
+      bar.className = 'status';
+      bar.textContent = 'Online - assessments can sync to Google Sheets.';
+    } else {
+      bar.className = 'status offline';
+      bar.textContent = 'Offline - assessments will be saved on this device.';
+    }
+  }
+
+  function showTab(e, id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    e.target.classList.add('active');
+
+    if (id === 'offlineQueue') renderOfflineQueue();
+    if (id === 'hazardLibrary') renderHazardLibrary();
+  }
+
+  function resetToTenRows() {
+    document.getElementById('hazardRows').innerHTML = '';
+    hazardRowCount = 0;
+    for (let i = 0; i < 10; i++) addHazardRow();
+  }
+
+  function addHazardRow() {
+    hazardRowCount++;
+    const id = hazardRowCount;
+
+    const div = document.createElement('div');
+    div.className = 'hazardRow';
+    div.dataset.row = id;
+
+    div.innerHTML = `
+      <div class="hazardHeader">
+        <h3>Hazard ${id}</h3>
+        <button type="button" class="btn danger" onclick="removeHazardRow(${id})">Remove</button>
+      </div>
+
+      <div class="grid">
+        <div>
+          <label>Hazard</label>
+          <select class="hazardSelect" onchange="hazardChanged(${id})">
+            ${hazardOptionsHtml()}
+          </select>
+        </div>
+        <div>
+          <label>Category</label>
+          <input class="category" readonly>
+        </div>
+      </div>
+
+      <div class="notice hazardNotice">Select a hazard to show suggested controls.</div>
+
+      <h3>Initial Risk</h3>
+      <div class="grid3">
+        <div>
+          <label>Frequency</label>
+          <select class="ifreq" onchange="calculateRow(${id})">${riskOptionsHtml(FREQ)}</select>
+        </div>
+        <div>
+          <label>Probability</label>
+          <select class="iprob" onchange="calculateRow(${id})">${riskOptionsHtml(PROB)}</select>
+        </div>
+        <div>
+          <label>Consequence</label>
+          <select class="icons" onchange="calculateRow(${id})">${riskOptionsHtml(CONS)}</select>
+        </div>
+      </div>
+
+      <div class="scoreBox initialScore">Initial Score: not calculated</div>
+
+      <h3>Controls</h3>
+      <label>Controls Selected / Applied</label>
+      <textarea class="controls" placeholder="Controls auto-populate when a hazard is selected. Edit as needed." oninput="calculateRow(${id})"></textarea>
+
+      <label>Additional Notes</label>
+      <textarea class="notes" placeholder="Permit number, restrictions, supervisor direction, field notes, etc."></textarea>
+
+      <h3>Residual / Re-Risk After Controls</h3>
+      <div class="grid3">
+        <div>
+          <label>Residual Frequency</label>
+          <select class="rfreq" onchange="calculateRow(${id})">${riskOptionsHtml(FREQ)}</select>
+        </div>
+        <div>
+          <label>Residual Probability</label>
+          <select class="rprob" onchange="calculateRow(${id})">${riskOptionsHtml(PROB)}</select>
+        </div>
+        <div>
+          <label>Residual Consequence</label>
+          <select class="rcons" onchange="calculateRow(${id})">${riskOptionsHtml(CONS)}</select>
+        </div>
+      </div>
+
+      <div class="scoreBox residualScore">Residual Score: not calculated</div>
+      <div class="scoreBox proceedStatus">Proceed Status: not calculated</div>
+    `;
+
+    document.getElementById('hazardRows').appendChild(div);
+  }
+
+  function removeHazardRow(id) {
+    const row = document.querySelector('.hazardRow[data-row="' + id + '"]');
+    if (row) row.remove();
+    calculateAllRows();
+  }
+
+  function hazardOptionsHtml() {
+    return '<option value="">Select hazard</option>' +
+      HAZARDS.map(h => `<option value="${esc(h.hazard)}">${esc(h.hazard)}</option>`).join('');
+  }
+
+  function riskOptionsHtml(list) {
+    return '<option value="">Select</option>' +
+      list.map(item => `<option value="${item.value}">${esc(item.text)}</option>`).join('');
+  }
+
+  function hazardChanged(id) {
+    const row = getRow(id);
+    const hazardName = row.querySelector('.hazardSelect').value;
+    const hazard = findHazard(hazardName);
+
+    row.querySelector('.category').value = hazard.category || '';
+    row.querySelector('.controls').value = hazard.controls || '';
+
+    const notice = row.querySelector('.hazardNotice');
+    let text = '';
+
+    if (hazard.permitTrigger) text += 'PERMIT / PROGRAM TRIGGER:\n' + hazard.permitTrigger + '\n\n';
+    if (hazard.notice) text += 'NOTICE:\n' + hazard.notice + '\n\n';
+    if (hazard.escalationTrigger) text += 'ESCALATION TRIGGER:\n' + hazard.escalationTrigger;
+
+    notice.className = hazard.permitTrigger || hazard.escalationTrigger ? 'notice warning hazardNotice' : 'notice hazardNotice';
+    notice.textContent = text || 'No specific permit/program trigger listed. Complete risk ranking and controls.';
+
+    calculateRow(id);
+  }
+
+  function calculateRow(id) {
+    const row = getRow(id);
+    if (!row) return;
+
+    const hazardName = row.querySelector('.hazardSelect').value;
+    if (!hazardName) {
+      calculateAllRows();
+      return;
+    }
+
+    const ifreq = Number(row.querySelector('.ifreq').value || 0);
+    const iprob = Number(row.querySelector('.iprob').value || 0);
+    const icons = Number(row.querySelector('.icons').value || 0);
+    const rfreq = Number(row.querySelector('.rfreq').value || 0);
+    const rprob = Number(row.querySelector('.rprob').value || 0);
+    const rcons = Number(row.querySelector('.rcons').value || 0);
+
+    const initialScore = ifreq * iprob * icons;
+    const residualScore = rfreq * rprob * rcons;
+
+    setScoreBox(row.querySelector('.initialScore'), 'Initial Score: ' + scoreText(initialScore), initialScore);
+    setScoreBox(row.querySelector('.residualScore'), 'Residual Score: ' + scoreText(residualScore), residualScore);
+
+    const statusBox = row.querySelector('.proceedStatus');
+    statusBox.textContent = 'Proceed Status: ' + getProceedStatus(residualScore);
+    setScoreClass(statusBox, residualScore);
+
+    calculateAllRows();
+  }
+
+  function calculateAllRows() {
+    const hazards = collectHazards();
+    const summary = document.getElementById('finalSummary');
+
+    if (!hazards.length) {
+      summary.className = 'scoreBox';
+      summary.textContent = 'Complete hazard rows to calculate final decision.';
+      return;
+    }
+
+    let highInitial = 0;
+    let highResidual = 0;
+
+    hazards.forEach(h => {
+      highInitial = Math.max(highInitial, Number(h.initialScore || 0));
+      highResidual = Math.max(highResidual, Number(h.residualScore || 0));
+    });
+
+    summary.textContent =
+      'Highest Initial Risk: ' + scoreText(highInitial) + '\n' +
+      'Highest Residual Risk: ' + scoreText(highResidual) + '\n\n' +
+      'Final Decision:\n' + getFinalDecision(highResidual);
+
+    setScoreClass(summary, highResidual);
+  }
+
+  function setScoreBox(el, text, score) {
+    el.textContent = text;
+    setScoreClass(el, score);
+  }
+
+  function setScoreClass(el, score) {
+    el.className = 'scoreBox';
+    score = Number(score || 0);
+
+    if (score >= 48) el.classList.add('scoreUnacceptable');
+    else if (score >= 26) el.classList.add('scoreHigh');
+    else if (score >= 10) el.classList.add('scoreModerate');
+    else if (score >= 1) el.classList.add('scoreLow');
+  }
+
+  function scoreText(score) {
+    score = Number(score || 0);
+    if (!score) return 'not calculated';
+    return score + ' - ' + getRiskLevel(score);
+  }
+
+  function getRiskLevel(score) {
+    score = Number(score || 0);
+    if (score >= 48) return 'D - Unacceptable Risk';
+    if (score >= 26) return 'C - High Risk';
+    if (score >= 10) return 'B - Moderate Risk';
+    if (score >= 1) return 'A - Low Risk';
+    return '';
+  }
+
+  function getProceedStatus(score) {
+    score = Number(score || 0);
+    if (!score) return 'Not calculated';
+    if (score >= 48) return 'STOP';
+    if (score >= 26) return 'ESCALATE';
+    if (score >= 10) return 'PROCEED WITH DOCUMENTED CONTROLS';
+    return 'PROCEED';
+  }
+
+  function getFinalDecision(score) {
+    score = Number(score || 0);
+    if (score >= 48) return 'DO NOT PROCEED - at least one hazard remains unacceptable after controls.';
+    if (score >= 26) return 'ESCALATE BEFORE PROCEEDING - at least one hazard remains high risk after controls.';
+    if (score >= 10) return 'PROCEED WITH DOCUMENTED CONTROLS - residual risk is moderate.';
+    if (score >= 1) return 'PROCEED - residual risk is low with controls in place.';
+    return 'Not calculated.';
+  }
+
+  function collectHazards() {
+    const rows = Array.from(document.querySelectorAll('.hazardRow'));
+    const hazards = [];
+
+    rows.forEach((row, index) => {
+      const hazardName = row.querySelector('.hazardSelect').value;
+      if (!hazardName) return;
+
+      const h = buildHazardObject(row, index + 1);
+      hazards.push(h);
+    });
+
+    return hazards;
+  }
+
+  function buildHazardObject(row, rowNumber) {
+    const hazardName = row.querySelector('.hazardSelect').value;
+    const hazard = findHazard(hazardName);
+
+    const ifreq = Number(row.querySelector('.ifreq').value || 0);
+    const iprob = Number(row.querySelector('.iprob').value || 0);
+    const icons = Number(row.querySelector('.icons').value || 0);
+    const rfreq = Number(row.querySelector('.rfreq').value || 0);
+    const rprob = Number(row.querySelector('.rprob').value || 0);
+    const rcons = Number(row.querySelector('.rcons').value || 0);
+
+    const initialScore = ifreq * iprob * icons;
+    const residualScore = rfreq * rprob * rcons;
+
+    return {
+      rowNumber,
+      hazard: hazardName,
+      category: hazard.category || '',
+      initialFrequencyText: getSelectedText(row.querySelector('.ifreq')),
+      initialProbabilityText: getSelectedText(row.querySelector('.iprob')),
+      initialConsequenceText: getSelectedText(row.querySelector('.icons')),
+      initialScore: initialScore || '',
+      initialLevel: getRiskLevel(initialScore),
+      controls: row.querySelector('.controls').value || '',
+      residualFrequencyText: getSelectedText(row.querySelector('.rfreq')),
+      residualProbabilityText: getSelectedText(row.querySelector('.rprob')),
+      residualConsequenceText: getSelectedText(row.querySelector('.rcons')),
+      residualScore: residualScore || '',
+      residualLevel: getRiskLevel(residualScore),
+      permitTrigger: hazard.permitTrigger || '',
+      notice: hazard.notice || '',
+      proceedStatus: getProceedStatus(residualScore),
+      notes: row.querySelector('.notes').value || ''
+    };
+  }
+
+  function collectAssessment() {
+    calculateAllRows();
+
+    const form = document.getElementById('assessmentForm');
+    const fd = new FormData(form);
+    const payload = {};
+
+    fd.forEach((value, key) => payload[key] = value);
+
+    payload.hazards = collectHazards();
+    payload.localAssessmentId = 'LOCAL-' + Date.now();
+
+    return payload;
+  }
+
+  async function submitAssessment(e) {
+    e.preventDefault();
+
+    const payload = collectAssessment();
+
+    if (!payload.hazards.length) {
+      setResult('submitResult', 'At least one hazard must be selected.', 'notice critical');
+      return;
+    }
+
+    if (!navigator.onLine) {
+      saveOffline(payload);
+      setResult('submitResult', 'Offline: assessment saved on this device.', 'notice warning');
+      renderOfflineQueue();
+      return;
+    }
+
+    try {
+      await syncPayload(payload);
+      setResult('submitResult', 'Assessment sent for sync. Check Google Sheet to confirm.', 'notice success');
+      document.getElementById('assessmentForm').reset();
+      setToday();
+      resetToTenRows();
+    } catch (err) {
+      saveOffline(payload);
+      setResult('submitResult', 'Sync failed. Assessment saved offline.\n\n' + err.message, 'notice warning');
+      renderOfflineQueue();
+    }
+  }
+
+  async function syncPayload(payload) {
+    const endpoint = getEndpoint();
+
+    if (!endpoint || endpoint.indexOf('PASTE_YOUR') !== -1) {
+      throw new Error('Apps Script endpoint is not configured.');
+    }
+
+    await fetch(endpoint, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({
+        action: 'submitAssessment',
+        payload
+      })
+    });
+  }
+
+  function previewAssessment() {
+    const payload = collectAssessment();
+    const box = document.getElementById('previewBox');
+
+    let text = '';
+    text += 'NO-SWP / NON-ROUTINE TASK RISK ASSESSMENT\n';
+    text += 'Date: ' + (payload.assessmentDate || '') + '\n';
+    text += 'Shift: ' + (payload.shift || '') + '\n';
+    text += 'Crew: ' + (payload.crew || '') + '\n';
+    text += 'Department: ' + (payload.department || '') + '\n';
+    text += 'Area: ' + (payload.area || '') + '\n';
+    text += 'Equipment: ' + (payload.equipment || '') + '\n';
+    text += 'Task: ' + (payload.taskDescription || '') + '\n';
+    text += 'SWP Status: ' + (payload.swpStatus || '') + '\n\n';
+
+    payload.hazards.forEach((h, i) => {
+      text += 'Hazard ' + (i + 1) + ': ' + h.hazard + '\n';
+      text += 'Initial Risk: ' + h.initialScore + ' - ' + h.initialLevel + '\n';
+      text += 'Controls: ' + h.controls + '\n';
+      text += 'Residual Risk: ' + h.residualScore + ' - ' + h.residualLevel + '\n';
+      text += 'Proceed Status: ' + h.proceedStatus + '\n';
+      if (h.permitTrigger) text += 'Permit / Program: ' + h.permitTrigger + '\n';
+      if (h.notice) text += 'Notice: ' + h.notice + '\n';
+      text += '\n';
+    });
+
+    box.style.display = 'block';
+    box.textContent = text;
+  }
+
+  function saveOffline(payload) {
+    const queue = getOfflineQueue();
+    queue.push(payload);
+    localStorage.setItem('noSwpOfflineQueue', JSON.stringify(queue));
+  }
+
+  function getOfflineQueue() {
+    try {
+      return JSON.parse(localStorage.getItem('noSwpOfflineQueue') || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  function renderOfflineQueue() {
+    const queue = getOfflineQueue();
+    const target = document.getElementById('offlineQueueList');
+
+    if (!queue.length) {
+      target.innerHTML = '<div class="notice success">No assessments saved offline.</div>';
+      return;
+    }
+
+    let html = '<table><thead><tr><th>#</th><th>Date</th><th>Task</th><th>Area</th><th>Hazards</th></tr></thead><tbody>';
+
+    queue.forEach((item, i) => {
+      html += '<tr>' +
+        '<td>' + (i + 1) + '</td>' +
+        '<td>' + esc(item.assessmentDate || '') + '</td>' +
+        '<td>' + esc(item.taskDescription || '') + '</td>' +
+        '<td>' + esc(item.area || '') + '</td>' +
+        '<td>' + esc((item.hazards || []).map(h => h.hazard).join('; ')) + '</td>' +
+        '</tr>';
+    });
+
+    html += '</tbody></table>';
+    target.innerHTML = html;
+  }
+
+  async function syncOfflineQueue() {
+    const queue = getOfflineQueue();
+
+    if (!queue.length) {
+      renderOfflineQueue();
+      return;
+    }
+
+    if (!navigator.onLine) {
+      alert('Still offline. Try again when service is available.');
+      return;
+    }
+
+    const remaining = [];
+    let synced = 0;
+
+    for (const item of queue) {
+      try {
+        await syncPayload(item);
+        synced++;
+      } catch {
+        remaining.push(item);
+      }
+    }
+
+    localStorage.setItem('noSwpOfflineQueue', JSON.stringify(remaining));
+    renderOfflineQueue();
+
+    alert('Sync attempted. Sent: ' + synced + '. Remaining offline: ' + remaining.length + '. Check Google Sheet to confirm.');
+  }
+
+  function clearOfflineQueue() {
+    if (!confirm('Clear all offline saved assessments on this device?')) return;
+    localStorage.setItem('noSwpOfflineQueue', JSON.stringify([]));
+    renderOfflineQueue();
+  }
+
+  function renderHazardLibrary() {
+    const target = document.getElementById('hazardLibraryTable');
+
+    let html = '<table><thead><tr><th>Hazard</th><th>Category</th><th>Permit / Program</th><th>Auto Controls</th></tr></thead><tbody>';
+
+    HAZARDS.forEach(h => {
+      html += '<tr>' +
+        '<td>' + esc(h.hazard) + '</td>' +
+        '<td>' + esc(h.category) + '</td>' +
+        '<td>' + esc(h.permitTrigger) + '</td>' +
+        '<td>' + esc(h.controls) + '</td>' +
+        '</tr>';
+    });
+
+    html += '</tbody></table>';
+    target.innerHTML = html;
+  }
+
+  function saveEndpoint() {
+    const value = document.getElementById('endpointInput').value.trim();
+    localStorage.setItem('gasEndpoint', value);
+    setResult('settingsResult', 'Endpoint saved on this device.', 'notice success');
+  }
+
+  function loadEndpoint() {
+    const saved = localStorage.getItem('gasEndpoint') || '';
+    document.getElementById('endpointInput').value = saved || GAS_ENDPOINT;
+  }
+
+  function getEndpoint() {
+    return localStorage.getItem('gasEndpoint') || GAS_ENDPOINT;
+  }
+
+  function getRow(id) {
+    return document.querySelector('.hazardRow[data-row="' + id + '"]');
+  }
+
+  function findHazard(name) {
+    return HAZARDS.find(h => h.hazard === name) || HAZARDS[HAZARDS.length - 1];
+  }
+
+  function getSelectedText(select) {
+    if (!select || select.selectedIndex < 0) return '';
+    return select.options[select.selectedIndex].text || '';
+  }
+
+  function setResult(id, text, className) {
+    const el = document.getElementById(id);
+    el.className = className || 'notice';
+    el.textContent = text;
+  }
+
+  function esc(value) {
+    return String(value == null ? '' : value).replace(/[&<>'"]/g, c => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[c]));
+  }
+</script>
+</body>
+</html>
