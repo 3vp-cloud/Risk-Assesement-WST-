@@ -1,4 +1,4 @@
-const CACHE_NAME = 'westshore-no-swp-risk-app-v4';
+const CACHE_NAME = 'westshore-no-swp-risk-app-v20';
 
 const APP_SHELL = [
   './',
@@ -18,13 +18,11 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => {
-        return Promise.all(
-          keys
-            .filter(key => key !== CACHE_NAME)
-            .map(key => caches.delete(key))
-        );
-      })
+      .then(keys => Promise.all(
+        keys
+          .filter(key => key !== CACHE_NAME)
+          .map(key => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
@@ -34,8 +32,6 @@ self.addEventListener('fetch', event => {
 
   if (request.method !== 'GET') return;
 
-  // Always try to load the newest app page first.
-  // If there is no service, fall back to the cached offline version.
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request)
@@ -54,24 +50,20 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // For static files, use cache first, then network.
   event.respondWith(
-    caches.match(request).then(cached => {
-      if (cached) return cached;
+    caches.match(request)
+      .then(cached => {
+        if (cached) return cached;
 
-      return fetch(request).then(response => {
-        const copy = response.clone();
+        return fetch(request).then(response => {
+          const copy = response.clone();
 
-        caches.open(CACHE_NAME).then(cache => {
-          cache.put(request, copy);
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(request, copy);
+          });
+
+          return response;
         });
-
-        return response;
-      });
-
-    }).catch(() => {
-      return caches.match('./index.html');
-    })
+      })
   );
 });
- 
