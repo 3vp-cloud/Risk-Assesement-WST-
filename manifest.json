@@ -2,7 +2,7 @@
   "name": "Westshore No-SWP Risk Assessment",
   "short_name": "No-SWP Risk",
   "description": "Offline-capable No-SWP and non-routine task risk assessment tool.",
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f4f6f8",
   "theme_color": "#1f2933",
