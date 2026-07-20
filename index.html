@@ -1,127 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>No-SWP Risk Assessment</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#1f2933">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#12324a">
   <link rel="manifest" href="manifest.json">
+  <title>Westshore Risk Assessment v4</title>
 
   <style>
+    :root {
+      --navy: #12324a;
+      --blue: #1e5f86;
+      --light: #eef4f7;
+      --line: #cbd7de;
+      --text: #17232c;
+      --muted: #5f707b;
+      --white: #ffffff;
+      --danger: #a61b1b;
+      --warn: #8a5a00;
+      --ok: #12633d;
+      --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      background: #f4f6f8;
-      color: #1f2933;
+      background: #f4f7f9;
+      color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
 
     header {
-      background: #1f2933;
-      color: #ffffff;
-      padding: 16px;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    header p {
-      margin: 6px 0 0;
-      font-size: 13px;
-      opacity: 0.9;
-    }
-
-    .status {
-      padding: 10px 14px;
-      background: #e8eef6;
-      font-weight: 700;
-      font-size: 13px;
-      border-bottom: 1px solid #cbd5e1;
-    }
-
-    .status.offline {
-      background: #fff4e5;
-      color: #7a3e00;
-    }
-
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding: 10px;
-      background: #ffffff;
-      border-bottom: 1px solid #d9dee7;
       position: sticky;
       top: 0;
       z-index: 20;
-    }
-
-    .tabBtn {
-      border: 1px solid #c8d0dc;
-      background: #ffffff;
-      padding: 9px 12px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .tabBtn.active {
-      background: #1f2933;
+      background: var(--navy);
       color: #ffffff;
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      font-size: 19px;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 12px;
+      margin: 4px 0 0;
+      opacity: 0.86;
     }
 
     main {
-      max-width: 1250px;
-      margin: 0 auto;
-      padding: 14px;
-    }
-
-    .panel {
-      display: none;
-    }
-
-    .panel.active {
-      display: block;
+      max-width: 900px;
+      margin: auto;
+      padding: 14px 12px 90px;
     }
 
     .card {
       background: #ffffff;
-      border: 1px solid #d9dee7;
-      border-radius: 10px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin: 0 0 12px;
+      color: var(--navy);
+    }
+
+    .card h3 {
+      font-size: 15px;
+      margin: 14px 0 8px;
+      color: var(--navy);
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
+      gap: 11px;
     }
 
     .grid3 {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
+      gap: 10px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
     }
 
     label {
       display: block;
-      font-weight: 700;
       font-size: 13px;
+      font-weight: 700;
       margin-bottom: 5px;
     }
 
-    input, select, textarea {
+    input,
+    select,
+    textarea,
+    button {
+      font: inherit;
+    }
+
+    input,
+    select,
+    textarea {
       width: 100%;
-      box-sizing: border-box;
-      padding: 9px;
-      border: 1px solid #b9c2d0;
-      border-radius: 7px;
+      border: 1px solid #aebdc6;
+      border-radius: 8px;
+      padding: 11px;
       background: #ffffff;
-      font-family: Arial, Helvetica, sans-serif;
-      font-size: 14px;
+      color: var(--text);
     }
 
     textarea {
@@ -129,182 +127,201 @@
       resize: vertical;
     }
 
-    .btn {
-      border: none;
-      background: #1f2933;
-      color: #ffffff;
-      padding: 10px 14px;
-      border-radius: 8px;
+    button {
+      border: 0;
+      border-radius: 9px;
+      padding: 12px 15px;
       font-weight: 700;
       cursor: pointer;
-      margin: 4px 4px 4px 0;
     }
 
-    .btn.secondary {
-      background: #465465;
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
-    .btn.green {
-      background: #166534;
+    .primary {
+      background: var(--blue);
+      color: #ffffff;
     }
 
-    .btn.danger {
-      background: #8a1f1f;
+    .secondary {
+      background: #e3edf2;
+      color: var(--navy);
     }
 
-    .notice {
-      padding: 12px;
-      border-radius: 8px;
-      margin: 10px 0;
-      background: #eef4ff;
-      border: 1px solid #bcd3ff;
-      white-space: pre-wrap;
+    .danger {
+      background: #f7dddd;
+      color: var(--danger);
     }
 
-    .warning {
-      background: #fff4e5;
-      border-color: #ffd18a;
-    }
-
-    .critical {
-      background: #ffecec;
-      border-color: #ffb7b7;
-    }
-
-    .success {
-      background: #eaf8ed;
-      border-color: #a7dfb0;
-    }
-
-    .hazardRow {
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 14px;
-      background: #fbfcfe;
-    }
-
-    .hazardHeader {
+    .button-row {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-
-    .hazardHeader h3 {
-      margin: 0;
-      font-size: 17px;
-    }
-
-    .scoreBox {
-      padding: 10px;
-      border-radius: 8px;
-      background: #eef1f5;
-      border: 1px solid #cbd5e1;
-      font-weight: 700;
-      white-space: pre-wrap;
-      margin: 10px 0;
-    }
-
-    .scoreLow {
-      background: #eaf8ed;
-      border-color: #a7dfb0;
-    }
-
-    .scoreModerate {
-      background: #fff9db;
-      border-color: #f4d35e;
-    }
-
-    .scoreHigh {
-      background: #fff4e5;
-      border-color: #ffbd6b;
-    }
-
-    .scoreUnacceptable {
-      background: #ffecec;
-      border-color: #ff9b9b;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin-top: 11px;
     }
 
     .small {
       font-size: 12px;
-      color: #5c6775;
+      color: var(--muted);
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #ffffff;
+    .step-row,
+    .saved-hazard {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 10px;
+      margin-top: 8px;
+      background: #fbfdfe;
     }
 
-    th, td {
-      border: 1px solid #d9dee7;
-      padding: 8px;
-      font-size: 13px;
-      vertical-align: top;
+    .step-head,
+    .hazard-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
     }
 
-    th {
-      background: #eef1f5;
-      text-align: left;
+    .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      background: #e5eef3;
+      color: var(--navy);
     }
 
-    .copybox {
-      white-space: pre-wrap;
-      font-family: Consolas, monospace;
-      background: #f0f2f5;
-      padding: 12px;
-      border: 1px solid #cbd3df;
+    .risk-box {
+      border-radius: 9px;
+      padding: 11px;
+      text-align: center;
+      font-weight: 700;
+      border: 1px solid var(--line);
+      background: #f7fafb;
+    }
+
+    .risk-A {
+      background: #dff3e7;
+      color: #125d35;
+    }
+
+    .risk-B {
+      background: #fff1bd;
+      color: #725000;
+    }
+
+    .risk-C {
+      background: #ffd5ad;
+      color: #7c3900;
+    }
+
+    .risk-D {
+      background: #f6c5c5;
+      color: #8e1515;
+    }
+
+    .control-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .check {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      border: 1px solid var(--line);
       border-radius: 8px;
-      margin-top: 12px;
+      padding: 10px;
+      background: #fbfdfe;
+      font-weight: 400;
     }
 
-    @media (max-width: 850px) {
-      .grid, .grid3 {
+    .check input {
+      width: 20px;
+      height: 20px;
+      margin: 0;
+      flex: 0 0 auto;
+    }
+
+    .notice {
+      padding: 10px;
+      border-left: 4px solid var(--blue);
+      background: #edf6fb;
+      border-radius: 7px;
+      font-size: 13px;
+    }
+
+    .stop {
+      border-left-color: var(--danger);
+      background: #fff0f0;
+      color: #741515;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .footer-actions {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 30;
+      background: #ffffff;
+      border-top: 1px solid var(--line);
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .footer-actions button {
+      max-width: 430px;
+      flex: 1;
+    }
+
+    @media (max-width: 650px) {
+      .grid,
+      .grid3,
+      .control-list {
         grid-template-columns: 1fr;
       }
 
-      .hazardHeader {
-        flex-direction: column;
-        align-items: flex-start;
+      main {
+        padding-left: 9px;
+        padding-right: 9px;
+      }
+
+      .card {
+        padding: 13px;
       }
     }
   </style>
 </head>
 
 <body>
-<header>
-  <h1>No-SWP / Non-Routine Task Risk Assessment</h1>
-  <p>Offline-capable field assessment for tasks without an approved or available safe work procedure.</p>
-</header>
+  <header>
+    <h1>Westshore No-SWP / Non-Routine Risk Assessment</h1>
+    <p>Build job steps, assess one hazard at a time, and capture data for future SWP development.</p>
+  </header>
 
-<div id="connectionStatus" class="status">Checking connection...</div>
+  <main>
+    <section class="card">
+      <h2>1. Assessment and Task Information</h2>
 
-<div class="tabs">
-  <button class="tabBtn active" onclick="showTab(event, 'newAssessment')">New Assessment</button>
-  <button class="tabBtn" onclick="showTab(event, 'offlineQueue')">Saved Offline</button>
-  <button class="tabBtn" onclick="showTab(event, 'hazardLibrary')">Hazard Library</button>
-  <button class="tabBtn" onclick="showTab(event, 'settings')">Settings</button>
-</div>
-
-<main>
-
-<section id="newAssessment" class="panel active">
-  <form id="assessmentForm" onsubmit="submitAssessment(event)">
-
-    <div class="card">
-      <h2>Task Information</h2>
-
-      <div class="grid3">
+      <div class="grid">
         <div>
-          <label>Date</label>
-          <input type="date" name="assessmentDate" id="assessmentDate" required>
+          <label for="date">Date</label>
+          <input id="date" type="date">
         </div>
 
         <div>
-          <label>Shift</label>
-          <select name="shift" required>
+          <label for="shift">Shift</label>
+          <select id="shift">
             <option value="">Select</option>
             <option>Days</option>
             <option>Afternoons</option>
@@ -313,839 +330,1278 @@
         </div>
 
         <div>
-          <label>Crew</label>
-          <select name="crew">
+          <label for="crew">Crew</label>
+          <select id="crew">
             <option value="">Select</option>
-            <option>A Crew</option>
-            <option>B Crew</option>
-            <option>C Crew</option>
-            <option>D Crew</option>
-            <option>E Crew</option>
-            <option>Contractor</option>
+            <option>A</option>
+            <option>B</option>
+            <option>C</option>
+            <option>D</option>
+            <option>E</option>
             <option>Other</option>
           </select>
         </div>
-      </div>
 
-      <div class="grid3">
         <div>
-          <label>Department</label>
-          <select name="department" required>
+          <label for="department">Department</label>
+          <select id="department">
             <option value="">Select</option>
-            <option>Operations</option>
             <option>Maintenance</option>
+            <option>Operations</option>
             <option>Electrical</option>
             <option>Mechanical</option>
-            <option>Engineering</option>
             <option>Contractor</option>
             <option>Other</option>
           </select>
         </div>
 
         <div>
-          <label>Area / Location</label>
-          <input name="area" required placeholder="e.g., Shiploader 1, Substation 2">
+          <label for="assessor">Completed By</label>
+          <input id="assessor" autocomplete="name">
         </div>
 
         <div>
-          <label>Equipment / System</label>
-          <input name="equipment" placeholder="Equipment or system name">
+          <label for="foreman">Foreman / Supervisor</label>
+          <input id="foreman">
         </div>
-      </div>
 
-      <label>Task Description</label>
-      <textarea name="taskDescription" required placeholder="Describe the task being assessed."></textarea>
-
-      <div class="grid">
         <div>
-          <label>SWP Status</label>
-          <select name="swpStatus" required>
+          <label for="location">Area / Location</label>
+          <input id="location">
+        </div>
+
+        <div>
+          <label for="equipment">Equipment / System</label>
+          <input id="equipment">
+        </div>
+
+        <div class="full">
+          <label for="task">Task / Scope of Work</label>
+          <textarea id="task" placeholder="Describe the overall job."></textarea>
+        </div>
+
+        <div>
+          <label for="swpStatus">SWP Status</label>
+          <select id="swpStatus">
             <option value="">Select</option>
-            <option>No approved SWP exists</option>
-            <option>SWP exists but is not accessible</option>
-            <option>SWP is outdated</option>
-            <option>SWP does not match field conditions</option>
-            <option>Scope changed from existing SWP</option>
-            <option>Emergency / urgent work before SWP available</option>
-            <option>New equipment / process</option>
-            <option>Contractor task not covered by SWP</option>
-            <option>Other procedure issue</option>
+            <option>No SWP exists</option>
+            <option>SWP unavailable</option>
+            <option>SWP outdated</option>
+            <option>SWP does not match conditions</option>
+            <option>Other</option>
           </select>
         </div>
 
         <div>
-          <label>Reason No SWP / Procedure Issue</label>
-          <input name="reasonNoSwp" placeholder="Brief reason">
+          <label for="repeated">Planned, Routine, or Repeated Task?</label>
+          <select id="repeated">
+            <option value="">Select</option>
+            <option>No</option>
+            <option>Yes - SWP follow-up required</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="swpReason">Why a usable SWP is not being used</label>
+          <textarea id="swpReason"></textarea>
         </div>
       </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Job Steps</h2>
+
+      <div class="notice">
+        List the work in the order it will be performed. These steps will be saved separately for future SWP development.
+      </div>
+
+      <div style="margin-top: 12px;">
+        <label for="stepText">Next Job Step</label>
+        <textarea
+          id="stepText"
+          placeholder="Example: Isolate conveyor and verify zero energy."
+        ></textarea>
+
+        <div class="button-row">
+          <button class="primary" id="addStepBtn" type="button">
+            Add Job Step
+          </button>
+        </div>
+      </div>
+
+      <div id="stepsList"></div>
+    </section>
+
+    <section class="card">
+      <h2>3. Add One Hazard</h2>
+
+      <div class="grid">
+        <div class="full">
+          <label for="stepSelect">Job Step</label>
+          <select id="stepSelect">
+            <option value="">Add a job step first</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="hazardType">Hazard</label>
+          <select id="hazardType"></select>
+        </div>
+
+        <div>
+          <label for="hazardDetail">Specific Hazard / Exposure</label>
+          <input
+            id="hazardDetail"
+            placeholder="Where, how, or who is exposed?"
+          >
+        </div>
+      </div>
+
+      <h3>Initial Risk — Before Additional Controls</h3>
 
       <div class="grid3">
         <div>
-          <label>Foreman / Supervisor</label>
-          <input name="foreman" required>
+          <label for="initialF">Frequency</label>
+          <select id="initialF"></select>
         </div>
 
         <div>
-          <label>Completed By</label>
-          <input name="completedBy" required>
+          <label for="initialP">Probability</label>
+          <select id="initialP"></select>
         </div>
 
         <div>
-          <label>Workers Involved</label>
-          <input name="workersInvolved" placeholder="Names or crew">
+          <label for="initialC">Consequence</label>
+          <select id="initialC"></select>
         </div>
       </div>
-    </div>
 
-    <div class="card">
-      <h2>Hazard Assessment Rows</h2>
-      <p class="small">Each hazard must be ranked separately before and after controls.</p>
-
-      <div id="hazardRows"></div>
-
-      <button type="button" class="btn secondary" onclick="addHazardRow()">Add Hazard Row</button>
-      <button type="button" class="btn secondary" onclick="resetToTenRows()">Reset to 10 Rows</button>
-    </div>
-
-    <div class="card">
-      <h2>Final Assessment</h2>
-
-      <div id="finalSummary" class="scoreBox">Complete hazard rows to calculate final decision.</div>
-
-      <label>HPP / SWP Follow-Up Notes</label>
-      <textarea name="hppNotes" placeholder="What procedure needs to be created, updated, made accessible, or reviewed?"></textarea>
-
-      <button type="button" class="btn secondary" onclick="calculateAllRows()">Recalculate</button>
-      <button type="button" class="btn secondary" onclick="previewAssessment()">Preview Summary</button>
-      <button type="submit" class="btn green">Submit / Sync Assessment</button>
-
-      <div id="submitResult"></div>
-      <div id="previewBox" class="copybox" style="display:none;"></div>
-    </div>
-
-  </form>
-</section>
-
-<section id="offlineQueue" class="panel">
-  <div class="card">
-    <h2>Saved Offline</h2>
-    <p class="small">These assessments are saved on this device and have not yet synced.</p>
-
-    <button class="btn green" onclick="syncOfflineQueue()">Sync Saved Assessments</button>
-    <button class="btn danger" onclick="clearOfflineQueue()">Clear Offline Queue</button>
-
-    <div id="offlineQueueList"></div>
-  </div>
-</section>
-
-<section id="hazardLibrary" class="panel">
-  <div class="card">
-    <h2>Hazard Library</h2>
-    <div id="hazardLibraryTable"></div>
-  </div>
-</section>
-
-<section id="settings" class="panel">
-  <div class="card">
-    <h2>Settings</h2>
-
-    <label>Google Apps Script Web App URL</label>
-    <input id="endpointInput" placeholder="Paste deployed Apps Script /exec URL">
-
-    <button class="btn" onclick="saveEndpoint()">Save Endpoint</button>
-
-    <div class="notice">
-      Paste the Apps Script web app URL ending in /exec, then click Save Endpoint.
-      This is saved on this device.
-    </div>
-
-    <div id="settingsResult"></div>
-  </div>
-</section>
-
-</main>
-
-<script>
-  const DEFAULT_GAS_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwlfjZ7--DbPEBZMYZ_Wq4sv6gmHBojTQHVDKMjvh5WhsNsjyxj3ymwJScZPHj0K5H87Q/exec';
-
-  const HAZARDS = [
-    ['Build-up / material accumulation', 'Physical / housekeeping', '', 'Get area washed; isolate affected area; barricade; remove loose material; control slip/trip hazard; confirm area is stable before work; communicate to affected workers.', 'Build-up can create slip/trip, engulfment, falling material, access, fire, or equipment hazards.', 'Escalate if build-up cannot be removed, area cannot be safely accessed, or material may fall/slide/engulf.'],
-    ['Working over / near water', 'Water / drowning exposure', 'Boatman / water rescue controls required', 'Boatman / water rescue controls; PFD/life jacket; rescue equipment available; buddy system; communication method; access/egress confirmed; lighting adequate; weather/tide/current considered; rescue plan reviewed.', 'Working over or near water requires Boatman / water rescue controls before work proceeds.', 'STOP if Boatman/water rescue controls are not available, PFD is not used, rescue equipment is missing, or communication is unreliable.'],
-    ['Noise exposure / hearing damage', 'Occupational hygiene', '', 'Hearing protection; identify noise source; limit exposure time; post/sign high-noise area; communicate requirement to crew; use quieter method where practicable.', 'Noise exposure can cause permanent hearing damage.', 'Escalate if noise level is unknown, workers report discomfort, or appropriate hearing protection is unavailable.'],
-    ['Hot work', 'Fire / ignition source', 'Hot work permit and hot work program required', 'Hot work permit; follow hot work program; fire watch; remove or protect combustibles; extinguisher available; gas test where required; isolate adjacent hazards; post-work fire watch/inspection.', 'Hot work requires the applicable permit and program controls before work begins.', 'STOP if permit is not available, fire watch unavailable, combustibles cannot be controlled, or fire protection is impaired.'],
-    ['Lead paint / coating disturbance', 'Chemical / toxic exposure', 'Lead/coating exposure-control program required', 'Follow lead/coating disturbance program; confirm coating content where unknown; exposure control plan; respiratory protection; containment; hygiene controls; controlled cleanup; waste handling; worker training.', 'Disturbing lead paint or unknown coatings can create toxic exposure.', 'STOP if coating is unknown and may contain lead, exposure controls are unavailable, or trained personnel are not available.'],
-    ['Confined space / restricted space', 'Confined space / atmospheric hazard', 'Confined space permit/program required', 'Confined space permit; follow confined space program; atmospheric testing; ventilation; attendant; rescue plan; isolation/lockout; communication; entry authorization.', 'Confined or restricted space work requires the applicable permit/program review before entry.', 'STOP if confined space status is unclear, testing is unavailable, rescue plan is not in place, or isolation is incomplete.'],
-    ['Hazardous energy / lockout', 'Energy isolation', 'Lockout procedure required', 'Lockout/isolate; verify zero energy; test before touch; block/bleed/stored energy release; use written lockout procedure; qualified person review; personal locks applied.', 'Hazardous energy must be controlled before work.', 'STOP if energy sources are unclear, isolation cannot be verified, or procedure is not available.'],
-    ['Electrical exposure', 'Electrical', 'Electrical safe work / lockout program required', 'Qualified electrician; lockout; test before touch; arc-flash controls; appropriate PPE; restricted access; electrical permit/procedure where required.', 'Electrical exposure requires qualified review.', 'STOP if energized work is possible and authorization/controls are not confirmed.'],
-    ['Mobile equipment / traffic', 'Mobile equipment', '', 'Traffic control plan; spotter/flagger; barricades; radio communication; speed restriction; one-way control where required; blind-corner control; pedestrian separation.', 'Mobile equipment and traffic hazards require positive control.', 'STOP if blind approach is uncontrolled, flagger/spotter absent, or equipment/pedestrians cannot be separated.'],
-    ['Working at heights', 'Fall hazard', 'Fall protection / rescue plan required where applicable', 'Fall protection; anchor verification; rescue plan; barricade below; tools secured; ladder/scaffold inspected; competent worker; access/egress confirmed.', 'Fall hazards require fall protection and rescue planning where applicable.', 'STOP if fall protection, anchor, rescue plan, or safe access is not confirmed.'],
-    ['Safeguard removed / bypassed', 'Machine safeguarding', 'Safeguard Override Program required', 'Use Safeguard Override Program; equivalent or greater temporary control; authorization; log; time limit; affected-worker communication; restore safeguard as soon as possible.', 'A removed or bypassed safeguard must be controlled through the Safeguard Override Program.', 'STOP if equivalent protection is not available or affected workers may be exposed to uncontrolled hazard.'],
-    ['Pinch / crush / caught between', 'Mechanical', '', 'Lockout where required; keep clear of line of fire; barricade; use tools/fixtures; spotter; communication; verify no unexpected movement.', 'Pinch/crush hazards must be controlled before hands/body enter the danger zone.', 'STOP if unexpected movement is possible or workers cannot stay clear of the line of fire.'],
-    ['Overhead load / lifting', 'Lifting / rigging', 'Lift plan / rigging controls where required', 'Lift plan where required; qualified rigger/operator; inspect rigging; barricade drop zone; tag lines; communication; no workers under suspended load.', 'Overhead load work requires control of the drop zone and competent rigging.', 'STOP if workers may be under load, rigging is uncertain, or communication is poor.'],
-    ['Dust / respiratory exposure', 'Respiratory / hygiene', '', 'Dust suppression; ventilation; respiratory protection; wet method; housekeeping; limit exposure; identify material; hygiene controls.', 'Dust may create respiratory, visibility, combustible dust, or cleanup hazards.', 'Escalate if material is unknown, dust is excessive, or respiratory controls are unavailable.'],
-    ['Poor lighting / visibility', 'Visibility', '', 'Temporary lighting; daylight-only work; spotter; reduce speed; barricade; restrict access; confirm visibility before work.', 'Poor visibility can increase traffic, slip/trip, fall, and equipment hazards.', 'STOP if workers cannot see the task, traffic route, access, or hazard clearly.'],
-    ['Chemical exposure', 'Chemical', 'SDS / chemical controls required', 'Review SDS; correct PPE; ventilation; containment; spill kit; eyewash/shower where required; trained workers; disposal plan.', 'Chemical work requires SDS review and applicable exposure controls.', 'STOP if chemical is unknown, SDS unavailable, or required PPE/controls are missing.'],
-    ['Manual handling / ergonomics', 'Ergonomic', '', 'Mechanical aid; team lift; reduce load; improve position; avoid awkward posture; rotate task; use proper tool.', 'Manual handling can create strain/sprain and musculoskeletal injury.', 'Escalate if lift is beyond safe capacity or awkward posture cannot be controlled.'],
-    ['Slip / trip / fall same level', 'Walking / working surface', '', 'Clean area; get area washed if build-up present; improve lighting; mark hazard; barricade; anti-slip footwear; remove hoses/cables; maintain access.', 'Walking/working surface hazards must be controlled before work begins.', 'STOP if access cannot be made safe.'],
-    ['Contractor interface / simultaneous operations', 'Coordination', '', 'Coordinate work groups; define work area; communication plan; supervisor contact; barricades; confirm contractor controls; pre-job meeting.', 'Simultaneous operations require coordination.', 'Escalate if responsibilities, communication, or work boundaries are unclear.'],
-    ['Fire / explosion', 'Fire / explosion', 'Fire protection / hot work / emergency response review where applicable', 'Remove ignition source; control fuel source; fire watch; extinguisher; gas test; ventilation; emergency response notification; stop affected process where required.', 'Fire/explosion hazards require controls before work proceeds.', 'STOP if ignition/fuel sources cannot be controlled or fire response controls are unavailable.'],
-    ['Other', 'Other', '', 'Complete task-specific hazard assessment; identify controls; involve competent person; escalate if hazard is not understood.', 'Other hazards require specific assessment before proceeding.', 'STOP if the hazard is not understood or controls cannot be confirmed.']
-  ].map(r => ({
-    hazard: r[0],
-    category: r[1],
-    permitTrigger: r[2],
-    controls: r[3],
-    notice: r[4],
-    escalationTrigger: r[5]
-  }));
-
-  const FREQ = [
-    [1, '1 - Remote: task occurs less than once per year'],
-    [2, '2 - Infrequent: task occurs once per year'],
-    [3, '3 - Occasional: task occurs once per week'],
-    [4, '4 - Regular: task occurs several times per week'],
-    [5, '5 - Daily: task occurs one or more times per day']
-  ];
-
-  const PROB = [
-    [1, '1 - Remote: not expected / has not occurred in past'],
-    [2, '2 - Conceivable: could occur over time'],
-    [3, '3 - Could occur: has occurred or could occur in this task'],
-    [4, '4 - Likely: will occur more than 50% of the time'],
-    [5, '5 - Will occur: expected unless controls are added']
-  ];
-
-  const CONS = [
-    [1, '1 - Negligible: no injury or first aid only'],
-    [2, '2 - Minor injury: no lost time expected'],
-    [3, '3 - Moderate injury: medical aid or lost time possible'],
-    [4, '4 - Major injury: serious injury or permanent disability possible'],
-    [5, '5 - Catastrophic: fatality or multiple major injuries possible']
-  ];
-
-  let hazardRowCount = 0;
-
-  window.addEventListener('load', () => {
-    registerServiceWorker();
-    setToday();
-    updateConnectionStatus();
-    window.addEventListener('online', updateConnectionStatus);
-    window.addEventListener('offline', updateConnectionStatus);
-    loadEndpoint();
-    resetToTenRows();
-    renderOfflineQueue();
-    renderHazardLibrary();
-  });
-
-  function registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
-    }
-  }
-
-  function setToday() {
-    document.getElementById('assessmentDate').value = new Date().toISOString().slice(0, 10);
-  }
-
-  function updateConnectionStatus() {
-    const bar = document.getElementById('connectionStatus');
-
-    if (navigator.onLine) {
-      bar.className = 'status';
-      bar.textContent = 'Online - assessments can sync to Google Sheets.';
-    } else {
-      bar.className = 'status offline';
-      bar.textContent = 'Offline - assessments will be saved on this device.';
-    }
-  }
-
-  function showTab(e, id) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.tabBtn').forEach(b => b.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    e.target.classList.add('active');
-
-    if (id === 'offlineQueue') renderOfflineQueue();
-    if (id === 'hazardLibrary') renderHazardLibrary();
-  }
-
-  function resetToTenRows() {
-    document.getElementById('hazardRows').innerHTML = '';
-    hazardRowCount = 0;
-
-    for (let i = 0; i < 10; i++) addHazardRow();
-  }
-
-  function addHazardRow() {
-    hazardRowCount++;
-    const id = hazardRowCount;
-
-    const div = document.createElement('div');
-    div.className = 'hazardRow';
-    div.dataset.row = id;
-
-    div.innerHTML = `
-      <div class="hazardHeader">
-        <h3>Hazard ${id}</h3>
-        <button type="button" class="btn danger" onclick="removeHazardRow(${id})">Remove</button>
+      <div id="initialRisk" class="risk-box" style="margin-top: 10px;">
+        Select all three factors
       </div>
+
+      <h3>Hazard-Specific Controls</h3>
+
+      <div class="small">
+        Only controls linked to the selected hazard are shown. Tick every control that will actually be in place.
+      </div>
+
+      <div
+        id="controlsList"
+        class="control-list"
+        style="margin-top: 9px;"
+      ></div>
+
+      <div style="margin-top: 10px;">
+        <label for="customControl">Additional / Task-Specific Control</label>
+        <input
+          id="customControl"
+          placeholder="Add a control not shown above."
+        >
+      </div>
+
+      <h3>Residual Risk — After Controls Are In Place</h3>
+
+      <div class="grid3">
+        <div>
+          <label for="residualF">Frequency</label>
+          <select id="residualF"></select>
+        </div>
+
+        <div>
+          <label for="residualP">Probability</label>
+          <select id="residualP"></select>
+        </div>
+
+        <div>
+          <label for="residualC">Consequence</label>
+          <select id="residualC"></select>
+        </div>
+      </div>
+
+      <div id="residualRisk" class="risk-box" style="margin-top: 10px;">
+        Select all three factors
+      </div>
+
+      <div
+        id="riskStop"
+        class="notice stop hidden"
+        style="margin-top: 10px;"
+      ></div>
+
+      <div class="button-row">
+        <button class="primary" id="saveHazardBtn" type="button">
+          Save Hazard and Clear Box
+        </button>
+
+        <button class="secondary" id="clearHazardBtn" type="button">
+          Clear Hazard Box
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4. Saved Hazards</h2>
+      <div id="hazardsList" class="small">No hazards saved yet.</div>
+    </section>
+
+    <section class="card">
+      <h2>5. Communication, Authorization, and Follow-Up</h2>
 
       <div class="grid">
         <div>
-          <label>Hazard</label>
-          <select class="hazardSelect" onchange="hazardChanged(${id})">${hazardOptionsHtml()}</select>
+          <label for="briefing">Briefing Method</label>
+          <select id="briefing">
+            <option value="">Select</option>
+            <option>Toolbox / pre-job briefing</option>
+            <option>Written instruction</option>
+            <option>Radio communication</option>
+            <option>Shift handover</option>
+            <option>Other</option>
+          </select>
         </div>
+
         <div>
-          <label>Category</label>
-          <input class="category" readonly>
+          <label for="authority">Final Authorization</label>
+          <input id="authority" placeholder="Name and role">
+        </div>
+
+        <div>
+          <label for="decision">Final Decision</label>
+          <select id="decision">
+            <option value="">Select</option>
+            <option>Proceed with controls</option>
+            <option>Proceed with restrictions / reassessment</option>
+            <option>Do not proceed - escalate</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="swpFollowup">SWP Follow-Up</label>
+          <select id="swpFollowup">
+            <option value="">Select</option>
+            <option>No</option>
+            <option>New SWP required</option>
+            <option>Existing SWP requires revision</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="finalNotes">
+            Briefing, stop criteria, authorization, or follow-up notes
+          </label>
+          <textarea id="finalNotes"></textarea>
         </div>
       </div>
+    </section>
 
-      <div class="notice hazardNotice">Select a hazard to show suggested controls.</div>
+    <section class="card">
+      <h2>Submission Settings</h2>
 
-      <h3>Initial Risk</h3>
-      <div class="grid3">
-        <div>
-          <label>Frequency</label>
-          <select class="ifreq" onchange="calculateRow(${id})">${riskOptionsHtml(FREQ)}</select>
-        </div>
-        <div>
-          <label>Probability</label>
-          <select class="iprob" onchange="calculateRow(${id})">${riskOptionsHtml(PROB)}</select>
-        </div>
-        <div>
-          <label>Consequence</label>
-          <select class="icons" onchange="calculateRow(${id})">${riskOptionsHtml(CONS)}</select>
-        </div>
+      <label for="endpoint">Google Apps Script Web App URL</label>
+
+      <input
+        id="endpoint"
+        type="url"
+        placeholder="https://script.google.com/macros/s/.../exec"
+      >
+
+      <div class="button-row">
+        <button class="secondary" id="saveSettingsBtn" type="button">
+          Save URL on This Device
+        </button>
       </div>
 
-      <div class="scoreBox initialScore">Initial Score: not calculated</div>
+      <p class="small">
+        The URL must end in <strong>/exec</strong>. It is saved only on this browser/device.
+      </p>
 
-      <h3>Controls</h3>
-      <label>Controls Selected / Applied</label>
-      <textarea class="controls" placeholder="Controls auto-populate when a hazard is selected. Edit as needed." oninput="calculateRow(${id})"></textarea>
+      <div id="status" class="notice hidden"></div>
+    </section>
+  </main>
 
-      <label>Additional Notes</label>
-      <textarea class="notes" placeholder="Permit number, restrictions, supervisor direction, field notes, etc."></textarea>
+  <div class="footer-actions">
+    <button class="secondary" id="saveDraftBtn" type="button">
+      Save Draft
+    </button>
 
-      <h3>Residual / Re-Risk After Controls</h3>
-      <div class="grid3">
-        <div>
-          <label>Residual Frequency</label>
-          <select class="rfreq" onchange="calculateRow(${id})">${riskOptionsHtml(FREQ)}</select>
-        </div>
-        <div>
-          <label>Residual Probability</label>
-          <select class="rprob" onchange="calculateRow(${id})">${riskOptionsHtml(PROB)}</select>
-        </div>
-        <div>
-          <label>Residual Consequence</label>
-          <select class="rcons" onchange="calculateRow(${id})">${riskOptionsHtml(CONS)}</select>
-        </div>
-      </div>
+    <button class="primary" id="submitBtn" type="button">
+      Submit Assessment
+    </button>
+  </div>
 
-      <div class="scoreBox residualScore">Residual Score: not calculated</div>
-      <div class="scoreBox proceedStatus">Proceed Status: not calculated</div>
-    `;
+  <script>
+    const MATRIX = {
+      frequency: [
+        [1, "Remote — less than once per year"],
+        [2, "Infrequent — once per year"],
+        [3, "Occasional — once per week"],
+        [4, "Regular — several times per week"],
+        [5, "Daily — one or more times per day"]
+      ],
 
-    document.getElementById('hazardRows').appendChild(div);
-  }
+      probability: [
+        [1, "Remote — has not occurred"],
+        [2, "Conceivable — could occur over time"],
+        [3, "Could occur — known to occur"],
+        [4, "Likely — may occur in near term"],
+        [5, "Will occur — expected if exposure continues"]
+      ],
 
-  function removeHazardRow(id) {
-    const row = getRow(id);
-    if (row) row.remove();
-    calculateAllRows();
-  }
-
-  function hazardOptionsHtml() {
-    return '<option value="">Select hazard</option>' +
-      HAZARDS.map(h => `<option value="${esc(h.hazard)}">${esc(h.hazard)}</option>`).join('');
-  }
-
-  function riskOptionsHtml(list) {
-    return '<option value="">Select</option>' +
-      list.map(item => `<option value="${item[0]}">${esc(item[1])}</option>`).join('');
-  }
-
-  function hazardChanged(id) {
-    const row = getRow(id);
-    const hazardName = row.querySelector('.hazardSelect').value;
-    const hazard = findHazard(hazardName);
-
-    row.querySelector('.category').value = hazard.category || '';
-    row.querySelector('.controls').value = hazard.controls || '';
-
-    let text = '';
-
-    if (hazard.permitTrigger) text += 'PERMIT / PROGRAM TRIGGER:\n' + hazard.permitTrigger + '\n\n';
-    if (hazard.notice) text += 'NOTICE:\n' + hazard.notice + '\n\n';
-    if (hazard.escalationTrigger) text += 'ESCALATION TRIGGER:\n' + hazard.escalationTrigger;
-
-    const notice = row.querySelector('.hazardNotice');
-    notice.className = hazard.permitTrigger || hazard.escalationTrigger ? 'notice warning hazardNotice' : 'notice hazardNotice';
-    notice.textContent = text || 'No specific permit/program trigger listed. Complete risk ranking and controls.';
-
-    calculateRow(id);
-  }
-
-  function calculateRow(id) {
-    const row = getRow(id);
-    if (!row) return;
-
-    updateRowScoreDisplay(row);
-    calculateAllRows();
-  }
-
-  function calculateAllRows() {
-    const rows = Array.from(document.querySelectorAll('.hazardRow'));
-
-    let highInitial = 0;
-    let highResidual = 0;
-    let completedHazards = 0;
-
-    rows.forEach(row => {
-      const result = updateRowScoreDisplay(row);
-      if (!result) return;
-
-      completedHazards++;
-      highInitial = Math.max(highInitial, result.initialScore);
-      highResidual = Math.max(highResidual, result.residualScore);
-    });
-
-    const summary = document.getElementById('finalSummary');
-
-    if (!completedHazards) {
-      summary.className = 'scoreBox';
-      summary.textContent = 'Complete hazard rows to calculate final decision.';
-      return;
-    }
-
-    summary.textContent =
-      'Highest Initial Risk: ' + scoreText(highInitial) + '\n' +
-      'Highest Residual Risk: ' + scoreText(highResidual) + '\n\n' +
-      'Final Decision:\n' + getFinalDecision(highResidual);
-
-    summary.className = 'scoreBox';
-    applyScoreClass(summary, highResidual);
-  }
-
-  function updateRowScoreDisplay(row) {
-    const hazardName = row.querySelector('.hazardSelect').value;
-
-    const initialBox = row.querySelector('.initialScore');
-    const residualBox = row.querySelector('.residualScore');
-    const statusBox = row.querySelector('.proceedStatus');
-
-    if (!hazardName) {
-      initialBox.className = 'scoreBox initialScore';
-      residualBox.className = 'scoreBox residualScore';
-      statusBox.className = 'scoreBox proceedStatus';
-
-      initialBox.textContent = 'Initial Score: not calculated';
-      residualBox.textContent = 'Residual Score: not calculated';
-      statusBox.textContent = 'Proceed Status: not calculated';
-
-      return null;
-    }
-
-    const ifreq = Number(row.querySelector('.ifreq').value || 0);
-    const iprob = Number(row.querySelector('.iprob').value || 0);
-    const icons = Number(row.querySelector('.icons').value || 0);
-
-    const rfreq = Number(row.querySelector('.rfreq').value || 0);
-    const rprob = Number(row.querySelector('.rprob').value || 0);
-    const rcons = Number(row.querySelector('.rcons').value || 0);
-
-    const initialScore = ifreq * iprob * icons;
-    const residualScore = rfreq * rprob * rcons;
-
-    initialBox.className = 'scoreBox initialScore';
-    residualBox.className = 'scoreBox residualScore';
-    statusBox.className = 'scoreBox proceedStatus';
-
-    initialBox.textContent = 'Initial Score: ' + scoreText(initialScore);
-    residualBox.textContent = 'Residual Score: ' + scoreText(residualScore);
-    statusBox.textContent = 'Proceed Status: ' + getProceedStatus(residualScore);
-
-    applyScoreClass(initialBox, initialScore);
-    applyScoreClass(residualBox, residualScore);
-    applyScoreClass(statusBox, residualScore);
-
-    return {
-      initialScore,
-      residualScore
+      consequence: [
+        [1, "Negligible — no injury"],
+        [2, "Minor — first aid / minor injury"],
+        [3, "Moderate — medical aid / lost time"],
+        [4, "Major — serious injury"],
+        [5, "Catastrophic — fatality or permanent disability"]
+      ]
     };
-  }
 
-  function applyScoreClass(el, score) {
-    score = Number(score || 0);
+    const COMMON = [
+      "Stop work and clarify the task",
+      "Affected workers participate in the assessment",
+      "Pre-job briefing / toolbox talk",
+      "Establish stop-work criteria",
+      "Direct foreman / supervisor oversight",
+      "Use required task-specific PPE"
+    ];
 
-    if (score >= 48) el.classList.add('scoreUnacceptable');
-    else if (score >= 26) el.classList.add('scoreHigh');
-    else if (score >= 10) el.classList.add('scoreModerate');
-    else if (score >= 1) el.classList.add('scoreLow');
-  }
+    const HAZARDS = {
+      "Hazardous Energy / Lockout": [
+        "Identify every energy source and isolation point",
+        "Apply approved lockout",
+        "Verify zero energy / test before touch",
+        "Try-start or functional test where applicable",
+        "Release stored hydraulic, pneumatic, gravity, spring, or thermal energy",
+        "Install mechanical blocking / restraints",
+        "Use group lockbox where required",
+        "Use a qualified person for electrical isolation",
+        "Review equipment-specific isolation procedure"
+      ],
 
-  function scoreText(score) {
-    score = Number(score || 0);
-    if (!score) return 'not calculated';
-    return score + ' - ' + getRiskLevel(score);
-  }
+      "Stored Energy / Pressure / Tension": [
+        "Relieve or restrain stored energy",
+        "Bleed pressure to zero",
+        "Block or crib raised components",
+        "Release spring or belt tension safely",
+        "Secure counterweights / gravity hazards",
+        "Verify gauges and indicators at zero",
+        "Maintain an exclusion zone"
+      ],
 
-  function getRiskLevel(score) {
-    score = Number(score || 0);
+      "Caught In / On / Between": [
+        "Lock out and verify zero energy",
+        "Install guards or physical barriers",
+        "Block, crib, chock, or secure moving components",
+        "Keep hands and body outside pinch zones",
+        "Use tools or devices that keep workers clear",
+        "Establish an exclusion zone",
+        "Use a spotter for movement or alignment",
+        "Do not wear loose clothing around moving equipment"
+      ],
 
-    if (score >= 48) return 'D - Unacceptable Risk';
-    if (score >= 26) return 'C - High Risk';
-    if (score >= 10) return 'B - Moderate Risk';
-    if (score >= 1) return 'A - Low Risk';
+      "Struck By": [
+        "Establish barricade / exclusion zone",
+        "Identify and control the line of fire",
+        "Secure tools, materials, and components",
+        "Use tag lines where appropriate",
+        "Use a spotter / signal person",
+        "Confirm radio or hand-signal communication",
+        "Keep workers clear of suspended or moving loads",
+        "Use traffic control where vehicles are involved"
+      ],
 
-    return '';
-  }
+      "Pinch / Crush Point": [
+        "Lock out and verify zero energy",
+        "Install blocking / cribbing",
+        "Use remote or hands-free positioning tools",
+        "Establish exclusion zone",
+        "Use spotter during positioning",
+        "Keep body parts out of the line of fire"
+      ],
 
-  function getProceedStatus(score) {
-    score = Number(score || 0);
+      "Moving / Rotating Equipment": [
+        "Lock out before access",
+        "Ensure guards are installed and functional",
+        "Prevent loose clothing, hair, or jewellery exposure",
+        "Use tools that maintain safe distance",
+        "Establish no-go zone",
+        "Confirm emergency stops are functional"
+      ],
 
-    if (!score) return 'Not calculated';
-    if (score >= 48) return 'STOP';
-    if (score >= 26) return 'ESCALATE';
-    if (score >= 10) return 'PROCEED WITH DOCUMENTED CONTROLS';
+      "Conveyor / Transfer Point": [
+        "Lock out conveyor system",
+        "Verify pull cords / emergency stops",
+        "Guard nip points and transfer points",
+        "Prevent material release or runback",
+        "Barricade below or around transfer area",
+        "Control dust and visibility"
+      ],
 
-    return 'PROCEED';
-  }
+      "Electrical Exposure / Arc Flash": [
+        "De-energize and lock out",
+        "Qualified electrician required",
+        "Test for absence of voltage",
+        "Review arc-flash label / incident energy",
+        "Establish shock and arc-flash boundaries",
+        "Use voltage-rated tools and PPE",
+        "Obtain energized work authorization if de-energizing is not feasible"
+      ],
 
-  function getFinalDecision(score) {
-    score = Number(score || 0);
+      "Working at Heights / Open Edge": [
+        "Use guardrails or engineered passive protection",
+        "Use travel restraint where possible",
+        "Use fall arrest with approved anchor",
+        "Inspect harness, lanyard, and connectors",
+        "Prepare rescue plan",
+        "Inspect ladder / scaffold / EWP",
+        "Barricade area below",
+        "Control dropped objects",
+        "Review wind and weather"
+      ],
 
-    if (score >= 48) return 'DO NOT PROCEED - at least one hazard remains unacceptable after controls.';
-    if (score >= 26) return 'ESCALATE BEFORE PROCEEDING - at least one hazard remains high risk after controls.';
-    if (score >= 10) return 'PROCEED WITH DOCUMENTED CONTROLS - residual risk is moderate.';
-    if (score >= 1) return 'PROCEED - residual risk is low with controls in place.';
+      "Falling Material / Overhead Load / Rigging": [
+        "Establish exclusion zone",
+        "Do not work beneath suspended loads",
+        "Inspect rigging and lifting devices",
+        "Confirm load weight and capacity",
+        "Use qualified rigger / crane operator",
+        "Use tag lines",
+        "Secure loose tools and materials",
+        "Use engineered lift plan when required"
+      ],
 
-    return 'Not calculated.';
-  }
+      "Mobile Equipment / Traffic": [
+        "Establish traffic control plan",
+        "Separate pedestrians and equipment",
+        "Use spotter / flagger",
+        "Confirm radio communication",
+        "Use barricades and signage",
+        "Wear high-visibility clothing",
+        "Verify operator competency",
+        "Confirm alarms, lights, and brakes"
+      ],
 
-  function collectAssessment() {
-    calculateAllRows();
+      "Slip / Trip / Same-Level Fall": [
+        "Clean spills and loose material",
+        "Route hoses, cords, and tools safely",
+        "Improve lighting",
+        "Use suitable access route",
+        "Apply anti-slip surface or traction",
+        "Maintain three-point contact",
+        "Barricade damaged walking surfaces"
+      ],
 
-    const form = document.getElementById('assessmentForm');
-    const fd = new FormData(form);
-    const payload = {};
+      "Working Over / Near Water": [
+        "Wear approved PFD",
+        "Assign boatman / rescue support",
+        "Provide lifebuoy and rescue equipment",
+        "Establish reliable communication",
+        "Review tide, current, and weather",
+        "Use fall restraint where practical",
+        "Prepare water rescue plan"
+      ],
 
-    fd.forEach((value, key) => payload[key] = value);
+      "Hot Work / Fire / Explosion": [
+        "Issue hot-work permit",
+        "Remove or protect combustibles",
+        "Assign trained fire watch",
+        "Provide suitable extinguisher / hose",
+        "Complete gas testing where required",
+        "Provide ventilation / fume extraction",
+        "Use welding screens",
+        "Complete post-work fire inspection"
+      ],
 
-    payload.hazards = collectHazards();
-    payload.localAssessmentId = 'LOCAL-' + Date.now();
+      "Confined or Restricted Space": [
+        "Confirm whether space meets confined-space definition",
+        "Issue entry permit",
+        "Test and continuously monitor atmosphere",
+        "Isolate all hazardous energy and material flow",
+        "Provide attendant",
+        "Prepare rescue plan and equipment",
+        "Provide ventilation",
+        "Control entry and communication"
+      ],
 
-    return payload;
-  }
+      "Dust / Respiratory / Visibility": [
+        "Eliminate or wet down dust source",
+        "Provide local exhaust / ventilation",
+        "Use suitable respiratory protection",
+        "Complete fit testing where required",
+        "Monitor exposure / atmosphere",
+        "Improve visibility and lighting",
+        "Restrict access to affected area"
+      ],
 
-  function collectHazards() {
-    const rows = Array.from(document.querySelectorAll('.hazardRow'));
-    const hazards = [];
+      "Chemical / Corrosive / Toxic": [
+        "Review SDS and product label",
+        "Substitute less hazardous product",
+        "Use closed transfer / containment",
+        "Provide ventilation",
+        "Use chemical-resistant PPE",
+        "Provide eyewash / emergency shower",
+        "Control spill and waste disposal"
+      ],
 
-    rows.forEach((row, index) => {
-      const hazardName = row.querySelector('.hazardSelect').value;
-      if (!hazardName) return;
+      "Noise / Vibration": [
+        "Reduce noise at source",
+        "Isolate or enclose equipment",
+        "Limit exposure duration",
+        "Use hearing protection",
+        "Post hearing-protection zone",
+        "Use low-vibration tools / rotate tasks"
+      ],
 
-      hazards.push(buildHazardObject(row, index + 1));
-    });
+      "Manual Handling / Ergonomic": [
+        "Use mechanical lifting aid",
+        "Reduce load size or weight",
+        "Use team lift",
+        "Improve working height and access",
+        "Avoid twisting / awkward posture",
+        "Plan rest breaks or task rotation"
+      ],
 
-    return hazards;
-  }
+      "Guard / Safeguard Removed or Bypassed": [
+        "Do not proceed without formal authorization",
+        "Assess consequences of safeguard loss",
+        "Install equivalent temporary protection",
+        "Lock out where exposure cannot be controlled",
+        "Limit duration and affected area",
+        "Clearly tag / log override",
+        "Assign designated authority and direct oversight",
+        "Verify safeguard restoration before normal operation"
+      ],
 
-  function buildHazardObject(row, rowNumber) {
-    const hazardName = row.querySelector('.hazardSelect').value;
-    const hazard = findHazard(hazardName);
+      "Weather / Wind / Lighting": [
+        "Review current and forecast conditions",
+        "Set wind / weather stop limits",
+        "Improve task lighting",
+        "Secure loose material",
+        "Suspend elevated or lifting work when limits are exceeded",
+        "Provide heat / cold stress controls"
+      ],
 
-    const ifreq = Number(row.querySelector('.ifreq').value || 0);
-    const iprob = Number(row.querySelector('.iprob').value || 0);
-    const icons = Number(row.querySelector('.icons').value || 0);
+      "Simultaneous Operations / Contractor Interface": [
+        "Identify all overlapping work",
+        "Assign one person in charge",
+        "Coordinate lockout and permits",
+        "Establish shared exclusion zones",
+        "Confirm communication method",
+        "Sequence work to remove conflicts",
+        "Conduct joint pre-job meeting"
+      ],
 
-    const rfreq = Number(row.querySelector('.rfreq').value || 0);
-    const rprob = Number(row.querySelector('.rprob').value || 0);
-    const rcons = Number(row.querySelector('.rcons').value || 0);
+      "Water / Washdown / Slippery Surface": [
+        "Stop or isolate washdown",
+        "Provide drainage / remove standing water",
+        "Use slip-resistant footwear",
+        "Barricade wet area",
+        "Protect electrical equipment",
+        "Improve access and lighting"
+      ],
 
-    const initialScore = ifreq * iprob * icons;
-    const residualScore = rfreq * rprob * rcons;
-
-    return {
-      rowNumber,
-      hazard: hazardName,
-      category: hazard.category || '',
-      initialFrequencyText: getSelectedText(row.querySelector('.ifreq')),
-      initialProbabilityText: getSelectedText(row.querySelector('.iprob')),
-      initialConsequenceText: getSelectedText(row.querySelector('.icons')),
-      initialScore: initialScore || '',
-      initialLevel: getRiskLevel(initialScore),
-      controls: row.querySelector('.controls').value || '',
-      residualFrequencyText: getSelectedText(row.querySelector('.rfreq')),
-      residualProbabilityText: getSelectedText(row.querySelector('.rprob')),
-      residualConsequenceText: getSelectedText(row.querySelector('.rcons')),
-      residualScore: residualScore || '',
-      residualLevel: getRiskLevel(residualScore),
-      permitTrigger: hazard.permitTrigger || '',
-      notice: hazard.notice || '',
-      proceedStatus: getProceedStatus(residualScore),
-      notes: row.querySelector('.notes').value || ''
+      "Other Hazard": COMMON
     };
-  }
 
-  async function submitAssessment(e) {
-    e.preventDefault();
+    const state = {
+      steps: [],
+      hazards: []
+    };
 
-    const payload = collectAssessment();
-
-    if (!payload.hazards.length) {
-      setResult('submitResult', 'At least one hazard must be selected.', 'notice critical');
-      return;
+    function byId(id) {
+      return document.getElementById(id);
     }
 
-    if (!navigator.onLine) {
-      saveOffline(payload);
-      setResult('submitResult', 'Offline: assessment saved on this device.', 'notice warning');
-      renderOfflineQueue();
-      return;
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      })[character]);
     }
 
-    try {
-      await postToAppsScript(payload);
-      setResult('submitResult', 'Assessment submitted. Check the Google Sheet to confirm it landed.', 'notice success');
-      document.getElementById('assessmentForm').reset();
-      setToday();
-      resetToTenRows();
-    } catch (err) {
-      saveOffline(payload);
-      setResult('submitResult', 'Submission failed. Assessment saved offline.\n\n' + err.message, 'notice warning');
-      renderOfflineQueue();
+    function fillSelect(id, items, placeholder) {
+      const select = byId(id);
+
+      select.innerHTML =
+        `<option value="">${placeholder}</option>` +
+        items
+          .map(([value, text]) =>
+            `<option value="${value}">${value} — ${escapeHtml(text)}</option>`
+          )
+          .join("");
     }
-  }
 
-  function postToAppsScript(payload) {
-    return new Promise((resolve, reject) => {
-      const endpoint = getEndpoint();
+    function fillHazards() {
+      byId("hazardType").innerHTML =
+        '<option value="">Select hazard</option>' +
+        Object.keys(HAZARDS)
+          .map(hazard => `<option>${escapeHtml(hazard)}</option>`)
+          .join("");
+    }
 
-      if (!endpoint || endpoint.indexOf('/exec') === -1) {
-        reject(new Error('Apps Script endpoint is missing or does not end in /exec. Go to Settings and save the correct URL.'));
+    function riskLevel(score) {
+      if (!score) {
+        return null;
+      }
+
+      if (score <= 9) {
+        return {
+          code: "A",
+          label: "Low",
+          action: "Proceed with normal controls.",
+          className: "risk-A"
+        };
+      }
+
+      if (score <= 25) {
+        return {
+          code: "B",
+          label: "Moderate",
+          action: "Proceed only with documented controls and worker briefing.",
+          className: "risk-B"
+        };
+      }
+
+      if (score <= 47) {
+        return {
+          code: "C",
+          label: "High",
+          action: "Additional controls, monitoring, and approval are required.",
+          className: "risk-C"
+        };
+      }
+
+      return {
+        code: "D",
+        label: "Unacceptable",
+        action: "Work must not proceed until controls reduce the risk. Senior review required.",
+        className: "risk-D"
+      };
+    }
+
+    function calculate(prefix) {
+      const frequency = Number(byId(prefix + "F").value);
+      const probability = Number(byId(prefix + "P").value);
+      const consequence = Number(byId(prefix + "C").value);
+      const box = byId(prefix + "Risk");
+
+      box.className = "risk-box";
+
+      if (!frequency || !probability || !consequence) {
+        box.textContent = "Select all three factors";
+
+        if (prefix === "residual") {
+          byId("riskStop").classList.add("hidden");
+        }
+
+        return null;
+      }
+
+      const score = frequency * probability * consequence;
+      const level = riskLevel(score);
+
+      box.classList.add(level.className);
+
+      box.innerHTML =
+        `Score ${score} — ${level.code}: ${level.label}` +
+        `<br><span class="small">${level.action}</span>`;
+
+      if (prefix === "residual") {
+        const stopNotice = byId("riskStop");
+
+        if (score >= 26) {
+          stopNotice.classList.remove("hidden");
+          stopNotice.textContent = level.action;
+        } else {
+          stopNotice.classList.add("hidden");
+        }
+      }
+
+      return {
+        f: frequency,
+        p: probability,
+        c: consequence,
+        score: score,
+        level: level.code + " - " + level.label
+      };
+    }
+
+    function renderControls() {
+      const selectedHazard = byId("hazardType").value;
+      const controls = selectedHazard ? HAZARDS[selectedHazard] : [];
+
+      if (!controls.length) {
+        byId("controlsList").innerHTML =
+          '<div class="small">Select a hazard to display applicable controls.</div>';
         return;
       }
 
-      const iframeName = 'hiddenPostFrame_' + Date.now();
+      byId("controlsList").innerHTML = controls
+        .map(control => `
+          <label class="check">
+            <input
+              type="checkbox"
+              name="control"
+              value="${escapeHtml(control)}"
+            >
+            <span>${escapeHtml(control)}</span>
+          </label>
+        `)
+        .join("");
+    }
 
-      const iframe = document.createElement('iframe');
-      iframe.name = iframeName;
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
+    function renderSteps() {
+      const stepsList = byId("stepsList");
+      const stepSelect = byId("stepSelect");
 
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = endpoint;
-      form.target = iframeName;
-      form.style.display = 'none';
+      if (!state.steps.length) {
+        stepsList.innerHTML =
+          '<p class="small">No job steps added.</p>';
 
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'payload';
-      input.value = JSON.stringify(payload);
+        stepSelect.innerHTML =
+          '<option value="">Add a job step first</option>';
 
-      form.appendChild(input);
-      document.body.appendChild(form);
+        return;
+      }
 
-      let done = false;
+      stepsList.innerHTML = state.steps
+        .map((step, index) => `
+          <div class="step-row">
+            <div class="step-head">
+              <div>
+                <span class="pill">Step ${index + 1}</span>
+                <div style="margin-top: 6px;">
+                  ${escapeHtml(step)}
+                </div>
+              </div>
 
-      iframe.onload = () => {
-        if (done) return;
-        done = true;
+              <button
+                class="danger"
+                type="button"
+                onclick="removeStep(${index})"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        `)
+        .join("");
 
-        setTimeout(() => {
-          form.remove();
-          iframe.remove();
-          resolve(true);
-        }, 300);
+      stepSelect.innerHTML =
+        '<option value="">Select job step</option>' +
+        state.steps
+          .map((step, index) =>
+            `<option value="${index}">Step ${index + 1}: ${escapeHtml(step)}</option>`
+          )
+          .join("");
+    }
+
+    window.removeStep = function(index) {
+      const hazardUsesStep = state.hazards.some(
+        hazard => hazard.stepIndex === index
+      );
+
+      if (hazardUsesStep) {
+        alert("Remove hazards linked to this step first.");
+        return;
+      }
+
+      state.steps.splice(index, 1);
+
+      state.hazards.forEach(hazard => {
+        if (hazard.stepIndex > index) {
+          hazard.stepIndex -= 1;
+        }
+      });
+
+      renderSteps();
+      renderHazards();
+      persistDraft();
+    };
+
+    function addStep() {
+      const stepText = byId("stepText").value.trim();
+
+      if (!stepText) {
+        alert("Enter a job step.");
+        return;
+      }
+
+      state.steps.push(stepText);
+      byId("stepText").value = "";
+
+      renderSteps();
+      persistDraft();
+    }
+
+    function clearHazardForm() {
+      [
+        "hazardType",
+        "hazardDetail",
+        "initialF",
+        "initialP",
+        "initialC",
+        "residualF",
+        "residualP",
+        "residualC",
+        "customControl"
+      ].forEach(id => {
+        byId(id).value = "";
+      });
+
+      renderControls();
+      calculate("initial");
+      calculate("residual");
+      byId("stepSelect").focus();
+    }
+
+    function saveHazard() {
+      const stepValue = byId("stepSelect").value;
+      const stepIndex = Number(stepValue);
+      const hazard = byId("hazardType").value;
+      const detail = byId("hazardDetail").value.trim();
+      const initial = calculate("initial");
+      const residual = calculate("residual");
+
+      const selectedControls = [
+        ...document.querySelectorAll('input[name="control"]:checked')
+      ].map(checkbox => checkbox.value);
+
+      const customControl = byId("customControl").value.trim();
+
+      if (customControl) {
+        selectedControls.push(customControl);
+      }
+
+      if (
+        stepValue === "" ||
+        !Number.isInteger(stepIndex) ||
+        stepIndex < 0 ||
+        stepIndex >= state.steps.length
+      ) {
+        alert("Select the job step.");
+        return;
+      }
+
+      if (!hazard) {
+        alert("Select a hazard.");
+        return;
+      }
+
+      if (!detail) {
+        alert("Describe the specific exposure.");
+        return;
+      }
+
+      if (!initial || !residual) {
+        alert("Complete both risk ratings.");
+        return;
+      }
+
+      if (!selectedControls.length) {
+        alert("Select or enter at least one control.");
+        return;
+      }
+
+      state.hazards.push({
+        stepIndex: stepIndex,
+        hazard: hazard,
+        detail: detail,
+        controls: selectedControls,
+        initial: initial,
+        residual: residual
+      });
+
+      renderHazards();
+      persistDraft();
+
+      const keepSelectedStep = stepIndex;
+
+      clearHazardForm();
+
+      byId("stepSelect").value = String(keepSelectedStep);
+
+      alert("Hazard saved. The hazard box is ready for the next hazard.");
+    }
+
+    function renderHazards() {
+      const hazardsList = byId("hazardsList");
+
+      if (!state.hazards.length) {
+        hazardsList.className = "small";
+        hazardsList.innerHTML = "No hazards saved yet.";
+        return;
+      }
+
+      hazardsList.className = "";
+
+      hazardsList.innerHTML = state.hazards
+        .map((hazard, index) => `
+          <div class="saved-hazard">
+            <div class="hazard-head">
+              <div>
+                <span class="pill">Step ${hazard.stepIndex + 1}</span>
+                <strong>${escapeHtml(hazard.hazard)}</strong>
+
+                <div style="margin-top: 5px;">
+                  ${escapeHtml(hazard.detail)}
+                </div>
+              </div>
+
+              <button
+                class="danger"
+                type="button"
+                onclick="removeHazard(${index})"
+              >
+                Remove
+              </button>
+            </div>
+
+            <div class="small" style="margin-top: 7px;">
+              <strong>Initial:</strong>
+              ${hazard.initial.score}
+              (${escapeHtml(hazard.initial.level)})
+
+              &nbsp;
+
+              <strong>Residual:</strong>
+              ${hazard.residual.score}
+              (${escapeHtml(hazard.residual.level)})
+            </div>
+
+            <div class="small" style="margin-top: 5px;">
+              <strong>Controls:</strong>
+              ${hazard.controls.map(escapeHtml).join("; ")}
+            </div>
+          </div>
+        `)
+        .join("");
+    }
+
+    window.removeHazard = function(index) {
+      state.hazards.splice(index, 1);
+      renderHazards();
+      persistDraft();
+    };
+
+    function collectAssessment() {
+      const fieldIds = [
+        "date",
+        "shift",
+        "crew",
+        "department",
+        "assessor",
+        "foreman",
+        "location",
+        "equipment",
+        "task",
+        "swpStatus",
+        "repeated",
+        "swpReason",
+        "briefing",
+        "authority",
+        "decision",
+        "swpFollowup",
+        "finalNotes"
+      ];
+
+      const assessment = {};
+
+      fieldIds.forEach(id => {
+        assessment[id] = byId(id).value.trim();
+      });
+
+      return {
+        version: "4.0",
+
+        assessment: assessment,
+
+        steps: state.steps.map((description, index) => ({
+          stepNumber: index + 1,
+          description: description
+        })),
+
+        hazards: state.hazards.map((hazard, index) => ({
+          ...hazard,
+          hazardNumber: index + 1,
+          stepNumber: hazard.stepIndex + 1,
+          stepDescription: state.steps[hazard.stepIndex]
+        })),
+
+        submittedAt: new Date().toISOString(),
+        userAgent: navigator.userAgent
       };
-
-      form.submit();
-
-      setTimeout(() => {
-        if (done) return;
-        done = true;
-
-        form.remove();
-        iframe.remove();
-        resolve(true);
-      }, 3500);
-    });
-  }
-
-  function saveOffline(payload) {
-    const queue = getOfflineQueue();
-    queue.push(payload);
-    localStorage.setItem('noSwpOfflineQueue', JSON.stringify(queue));
-  }
-
-  function getOfflineQueue() {
-    try {
-      return JSON.parse(localStorage.getItem('noSwpOfflineQueue') || '[]');
-    } catch {
-      return [];
-    }
-  }
-
-  function renderOfflineQueue() {
-    const queue = getOfflineQueue();
-    const target = document.getElementById('offlineQueueList');
-
-    if (!queue.length) {
-      target.innerHTML = '<div class="notice success">No assessments saved offline.</div>';
-      return;
     }
 
-    let html = '<table><thead><tr><th>#</th><th>Date</th><th>Task</th><th>Area</th><th>Hazards</th></tr></thead><tbody>';
+    function validateSubmission(data) {
+      const assessment = data.assessment;
 
-    queue.forEach((item, i) => {
-      html += '<tr>' +
-        '<td>' + (i + 1) + '</td>' +
-        '<td>' + esc(item.assessmentDate || '') + '</td>' +
-        '<td>' + esc(item.taskDescription || '') + '</td>' +
-        '<td>' + esc(item.area || '') + '</td>' +
-        '<td>' + esc((item.hazards || []).map(h => h.hazard).join('; ')) + '</td>' +
-        '</tr>';
-    });
+      const requiredFields = [
+        ["date", "Date"],
+        ["shift", "Shift"],
+        ["assessor", "Completed By"],
+        ["location", "Location"],
+        ["task", "Task / Scope"]
+      ];
 
-    html += '</tbody></table>';
-    target.innerHTML = html;
-  }
+      for (const [field, name] of requiredFields) {
+        if (!assessment[field]) {
+          return name + " is required.";
+        }
+      }
 
-  async function syncOfflineQueue() {
-    const queue = getOfflineQueue();
+      if (!data.steps.length) {
+        return "Add at least one job step.";
+      }
 
-    if (!queue.length) {
-      renderOfflineQueue();
-      return;
+      if (!data.hazards.length) {
+        return "Save at least one hazard.";
+      }
+
+      if (!assessment.decision) {
+        return "Select the final decision.";
+      }
+
+      return "";
     }
 
-    if (!navigator.onLine) {
-      alert('Still offline. Try again when service is available.');
-      return;
+    function persistDraft() {
+      const values = {};
+
+      document
+        .querySelectorAll("input[id], select[id], textarea[id]")
+        .forEach(element => {
+          if (element.id !== "endpoint") {
+            values[element.id] = element.value;
+          }
+        });
+
+      localStorage.setItem(
+        "westshoreRiskDraftV4",
+        JSON.stringify({
+          state: state,
+          values: values,
+          savedAt: new Date().toISOString()
+        })
+      );
     }
 
-    const remaining = [];
-    let synced = 0;
+    function loadDraft() {
+      const savedDraft = localStorage.getItem("westshoreRiskDraftV4");
 
-    for (const item of queue) {
+      if (!savedDraft) {
+        return;
+      }
+
       try {
-        await postToAppsScript(item);
-        synced++;
-      } catch {
-        remaining.push(item);
+        const draft = JSON.parse(savedDraft);
+
+        state.steps = draft.state?.steps || [];
+        state.hazards = draft.state?.hazards || [];
+
+        Object.entries(draft.values || {}).forEach(([id, value]) => {
+          if (byId(id)) {
+            byId(id).value = value;
+          }
+        });
+
+        renderSteps();
+        renderHazards();
+        renderControls();
+        calculate("initial");
+        calculate("residual");
+      } catch (error) {
+        console.error("Unable to load draft:", error);
       }
     }
 
-    localStorage.setItem('noSwpOfflineQueue', JSON.stringify(remaining));
-    renderOfflineQueue();
+    function showStatus(message, isError = false) {
+      const status = byId("status");
 
-    alert('Sync attempted. Sent: ' + synced + '. Remaining offline: ' + remaining.length + '. Check Google Sheet to confirm.');
-  }
+      status.classList.remove("hidden");
+      status.classList.toggle("stop", isError);
+      status.textContent = message;
+    }
 
-  function clearOfflineQueue() {
-    if (!confirm('Clear all offline saved assessments on this device?')) return;
-    localStorage.setItem('noSwpOfflineQueue', JSON.stringify([]));
-    renderOfflineQueue();
-  }
+    async function submitAssessment() {
+      const endpoint = byId("endpoint").value.trim();
 
-  function previewAssessment() {
-    const payload = collectAssessment();
-    const box = document.getElementById('previewBox');
+      if (!endpoint.endsWith("/exec")) {
+        showStatus(
+          "Apps Script endpoint is missing or does not end in /exec.",
+          true
+        );
+        return;
+      }
 
-    let text = '';
+      const data = collectAssessment();
+      const validationError = validateSubmission(data);
 
-    text += 'NO-SWP / NON-ROUTINE TASK RISK ASSESSMENT\n';
-    text += 'Date: ' + (payload.assessmentDate || '') + '\n';
-    text += 'Shift: ' + (payload.shift || '') + '\n';
-    text += 'Crew: ' + (payload.crew || '') + '\n';
-    text += 'Department: ' + (payload.department || '') + '\n';
-    text += 'Area: ' + (payload.area || '') + '\n';
-    text += 'Equipment: ' + (payload.equipment || '') + '\n';
-    text += 'Task: ' + (payload.taskDescription || '') + '\n';
-    text += 'SWP Status: ' + (payload.swpStatus || '') + '\n\n';
+      if (validationError) {
+        showStatus(validationError, true);
+        return;
+      }
 
-    payload.hazards.forEach((h, i) => {
-      text += 'Hazard ' + (i + 1) + ': ' + h.hazard + '\n';
-      text += 'Initial Risk: ' + h.initialScore + ' - ' + h.initialLevel + '\n';
-      text += 'Controls: ' + h.controls + '\n';
-      text += 'Residual Risk: ' + h.residualScore + ' - ' + h.residualLevel + '\n';
-      text += 'Proceed Status: ' + h.proceedStatus + '\n';
-      if (h.permitTrigger) text += 'Permit / Program: ' + h.permitTrigger + '\n';
-      if (h.notice) text += 'Notice: ' + h.notice + '\n';
-      if (h.notes) text += 'Notes: ' + h.notes + '\n';
-      text += '\n';
-    });
+      byId("submitBtn").disabled = true;
 
-    box.style.display = 'block';
-    box.textContent = text;
-  }
+      try {
+        await fetch(endpoint, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(data)
+        });
 
-  function renderHazardLibrary() {
-    const target = document.getElementById('hazardLibraryTable');
+        localStorage.setItem(
+          "westshoreRiskLastSubmission",
+          JSON.stringify(data)
+        );
 
-    let html = '<table><thead><tr><th>Hazard</th><th>Category</th><th>Permit / Program</th><th>Auto Controls</th></tr></thead><tbody>';
+        localStorage.removeItem("westshoreRiskDraftV4");
 
-    HAZARDS.forEach(h => {
-      html += '<tr>' +
-        '<td>' + esc(h.hazard) + '</td>' +
-        '<td>' + esc(h.category) + '</td>' +
-        '<td>' + esc(h.permitTrigger) + '</td>' +
-        '<td>' + esc(h.controls) + '</td>' +
-        '</tr>';
-    });
+        showStatus(
+          "Assessment sent. Check the Google Sheet to confirm the new Assessment ID and rows."
+        );
+      } catch (error) {
+        console.error(error);
 
-    html += '</tbody></table>';
-    target.innerHTML = html;
-  }
+        localStorage.setItem(
+          "westshoreRiskQueuedSubmission",
+          JSON.stringify(data)
+        );
 
-  function saveEndpoint() {
-    const value = document.getElementById('endpointInput').value.trim();
-    localStorage.setItem('gasEndpoint', value);
-    setResult('settingsResult', 'Endpoint saved on this device.', 'notice success');
-  }
+        showStatus(
+          "Submission failed. The assessment was saved on this device for recovery.",
+          true
+        );
+      } finally {
+        byId("submitBtn").disabled = false;
+      }
+    }
 
-  function loadEndpoint() {
-    const saved = localStorage.getItem('gasEndpoint') || '';
-    document.getElementById('endpointInput').value = saved || DEFAULT_GAS_ENDPOINT;
-  }
+    function saveSettings() {
+      const endpoint = byId("endpoint").value.trim();
 
-  function getEndpoint() {
-    return localStorage.getItem('gasEndpoint') || DEFAULT_GAS_ENDPOINT;
-  }
+      localStorage.setItem(
+        "westshoreRiskEndpoint",
+        endpoint
+      );
 
-  function getRow(id) {
-    return document.querySelector('.hazardRow[data-row="' + id + '"]');
-  }
+      showStatus(
+        "Apps Script URL saved on this device."
+      );
+    }
 
-  function findHazard(name) {
-    return HAZARDS.find(h => h.hazard === name) || HAZARDS[HAZARDS.length - 1];
-  }
+    function init() {
+      byId("date").value =
+        new Date().toISOString().slice(0, 10);
 
-  function getSelectedText(select) {
-    if (!select || select.selectedIndex < 0) return '';
-    return select.options[select.selectedIndex].text || '';
-  }
+      fillSelect(
+        "initialF",
+        MATRIX.frequency,
+        "Select frequency"
+      );
 
-  function setResult(id, text, className) {
-    const el = document.getElementById(id);
-    el.className = className || 'notice';
-    el.textContent = text;
-  }
+      fillSelect(
+        "residualF",
+        MATRIX.frequency,
+        "Select frequency"
+      );
 
-  function esc(value) {
-    return String(value == null ? '' : value).replace(/[&<>'"]/g, c => ({
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      "'": '&#39;',
-      '"': '&quot;'
-    }[c]));
-  }
-</script>
+      fillSelect(
+        "initialP",
+        MATRIX.probability,
+        "Select probability"
+      );
+
+      fillSelect(
+        "residualP",
+        MATRIX.probability,
+        "Select probability"
+      );
+
+      fillSelect(
+        "initialC",
+        MATRIX.consequence,
+        "Select consequence"
+      );
+
+      fillSelect(
+        "residualC",
+        MATRIX.consequence,
+        "Select consequence"
+      );
+
+      fillHazards();
+      renderControls();
+      renderSteps();
+      renderHazards();
+
+      byId("endpoint").value =
+        localStorage.getItem("westshoreRiskEndpoint") || "";
+
+      loadDraft();
+
+      byId("addStepBtn").onclick = addStep;
+
+      byId("hazardType").onchange = renderControls;
+
+      [
+        "initialF",
+        "initialP",
+        "initialC"
+      ].forEach(id => {
+        byId(id).onchange = () => calculate("initial");
+      });
+
+      [
+        "residualF",
+        "residualP",
+        "residualC"
+      ].forEach(id => {
+        byId(id).onchange = () => calculate("residual");
+      });
+
+      byId("saveHazardBtn").onclick = saveHazard;
+      byId("clearHazardBtn").onclick = clearHazardForm;
+
+      byId("saveDraftBtn").onclick = () => {
+        persistDraft();
+        showStatus("Draft saved on this device.");
+      };
+
+      byId("saveSettingsBtn").onclick = saveSettings;
+      byId("submitBtn").onclick = submitAssessment;
+
+      window.addEventListener(
+        "beforeunload",
+        persistDraft
+      );
+    }
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      init
+    );
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./sw.js")
+          .catch(error => {
+            console.error(
+              "Service worker registration failed:",
+              error
+            );
+          });
+      });
+    }
+  </script>
 </body>
 </html>
